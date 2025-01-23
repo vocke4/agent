@@ -1,9 +1,14 @@
 'use client';
-import { useState } from 'react';
+import React, { useState } from 'react';
+
+type Task = {
+  description: string;
+  status: string;
+};
 
 type Workflow = {
   id: string;
-  tasks: Array<{ description: string; status: string }>;
+  tasks: Task[];
   current_step: number;
 };
 
@@ -18,7 +23,7 @@ export default function Home() {
       body: JSON.stringify({ goal }),
     });
     const { workflowId } = await res.json();
-    
+
     // Poll for workflow status
     const poll = setInterval(async () => {
       const res = await fetch(`/api/execute-step`, {
@@ -27,11 +32,11 @@ export default function Home() {
         body: JSON.stringify({ workflowId }),
       });
       const { tasks } = await res.json();
-      
-      if (tasks.every((t) => t.status === "success")) {
+
+      if (tasks.every((t: Task) => t.status === 'success')) {
         clearInterval(poll);
       }
-      setWorkflow(prev => ({ ...prev!, tasks }));
+      setWorkflow((prev) => (prev ? { ...prev, tasks } : { id: workflowId, tasks, current_step: 0 }));
     }, 2000);
   };
 
@@ -59,10 +64,12 @@ export default function Home() {
           {workflow.tasks.map((task, i) => (
             <div key={i} className="p-4 border rounded-lg">
               <div className="flex items-center gap-3">
-                <div className={`w-3 h-3 rounded-full 
-                  ${task.status === "success" ? "bg-green-500" : "bg-gray-300"}`}
+                <div
+                  className={`w-3 h-3 rounded-full ${
+                    task.status === 'success' ? 'bg-green-500' : 'bg-gray-300'
+                  }`}
                 />
-                <span className={task.status === "success" ? "text-green-600" : ""}>
+                <span className={task.status === 'success' ? 'text-green-600' : ''}>
                   {task.description}
                 </span>
               </div>

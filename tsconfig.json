@@ -23,6 +23,14 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
+    "types": [
+      "next",
+      "node"
+    ], // Add Next.js and Node types
+    "forceConsistentCasingInFileNames": true, // Ensures consistent imports
+    "strictNullChecks": true, // Ensure null safety
+    "allowSyntheticDefaultImports": true // Avoid module import issues
+    ,
     "plugins": [
       {
         "name": "next"
@@ -31,7 +39,8 @@
   },
   "include": [
     "src/**/*",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "next-env.d.ts" // Include Next.js env types
   ],
   "exclude": [
     "node_modules"
