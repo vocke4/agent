@@ -1,7 +1,21 @@
 import { NextResponse } from 'next/server';
+import { supabase } from '@/app/utils/supabaseClient';
 
 export async function POST(request: Request) {
-  const { goal } = await request.json();
-  // Temporary mock response
-  return NextResponse.json({ workflowId: "temp-id-123" });
+  try {
+    const { goal } = await request.json();
+
+    // Insert workflow data into Supabase
+    const { data, error } = await supabase
+      .from('workflows')
+      .insert([{ goal }]);
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return NextResponse.json({ workflowId: data[0].id });
+  } catch (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
 }
