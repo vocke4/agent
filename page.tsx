@@ -28,7 +28,7 @@ export default function Home() {
       });
       const { tasks } = await res.json();
       
-      if (tasks.every((t: Task) => t.status === "success")) {
+      if (tasks.every((t) => t.status === "success")) {
         clearInterval(poll);
       }
       setWorkflow(prev => ({ ...prev!, tasks }));
