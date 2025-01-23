@@ -1,3 +1,6 @@
+// Add at the top of your page.tsx
+import { Task } from '@/types';
+
 'use client';
 import React, { useState } from 'react';
 
