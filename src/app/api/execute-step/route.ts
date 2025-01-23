@@ -1,44 +1,23 @@
-import { sql } from "@vercel/postgres";
-import { NextResponse } from "next/server";
-import { openai } from "@/app/utils/openai";
-import { Task } from "@/types";
+import { NextResponse } from 'next/server';
+import { sql } from '@vercel/postgres';
+import OpenAI from 'openai';
 
-export async function POST(req: Request) {
-  const { workflowId } = await req.json();
-  const { rows: [workflow] } = await sql`
-    SELECT * FROM workflows WHERE id = ${workflowId}
-  `;
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
 
-  // Generate tasks if first run
-  if (!workflow.tasks) {
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4",
-      messages: [{
-        role: "user",
-        content: `Break "${workflow.goal}" into 3-5 sequential tasks as a JSON array. Example: ["Research topic", "Draft outline"]`
-      }],
-    });
-
-    const tasks: Task[] = JSON.parse(completion.choices[0].message.content || "[]")
-      .map((desc: string) => ({ description: desc, status: "pending" }));
-
-    await sql`
-      UPDATE workflows
-      SET tasks = ${JSON.stringify(tasks)}
-      WHERE id = ${workflowId}
+export async function POST(request: Request) {
+  const { workflowId } = await request.json();
+  try {
+    const { rows: [workflow] } = await sql`
+      SELECT * FROM workflows WHERE id = ${workflowId}
     `;
+
+    if (!workflow.tasks) {
+      // Task generation logic here
+    }
+
+    // Task execution logic here
+    return NextResponse.json({ tasks: updatedTasks });
+  } catch (error) {
+    return NextResponse.json({ error: "Execution failed" }, { status: 500 });
   }
-
-  // Execute next task
-  const currentStep = workflow.current_step || 0;
-  const tasks: Task[] = workflow.tasks || [];
-  tasks[currentStep].status = "success"; // Simulate task success
-
-  await sql`
-    UPDATE workflows
-    SET current_step = ${currentStep + 1}, tasks = ${JSON.stringify(tasks)}
-    WHERE id = ${workflowId}
-  `;
-
-  return NextResponse.json({ tasks });
 }
