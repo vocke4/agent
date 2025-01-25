@@ -2,61 +2,101 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import OpenAI from 'openai';
 
-// Use the correct runtime export
-export const runtime = 'edge';  // Corrected based on Next.js recommendations
+// Ensure environment variables are available
+const requiredEnvVars = [
+  'NEXT_PUBLIC_SUPABASE_SUPABASE_URL',
+  'NEXT_PUBLIC_SUPABASE_SUPABASE_SERVICE_ROLE_KEY',
+  'OPENAI_API_KEY'
+];
 
-// Supabase credentials (ensure they are correctly set in your .env.local)
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_SUPABASE_URL!;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_SUPABASE_SERVICE_ROLE_KEY!;
+for (const envVar of requiredEnvVars) {
+  if (!process.env[envVar]) {
+    console.error(`Missing required environment variable: ${envVar}`);
+    throw new Error(`Missing required environment variable: ${envVar}`);
+  }
+}
 
-const supabase = createClient(supabaseUrl, supabaseKey);
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
+// Initialize Supabase client
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_SUPABASE_SERVICE_ROLE_KEY!
+);
+
+// Initialize OpenAI client
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY!,
+});
+
+// Ensure optimal Next.js runtime
+export const runtime = 'edge';
 
 export async function POST(request: NextRequest) {
   try {
-    // Validate content type
+    // Validate request body
     const contentType = request.headers.get('content-type');
     if (!contentType?.includes('application/json')) {
-      return NextResponse.json({ error: 'Invalid content type' }, { status: 415 });
+      return NextResponse.json(
+        { error: 'Invalid content type. Expecting JSON' },
+        { status: 415 }
+      );
     }
 
     const { goal } = await request.json();
     if (!goal || typeof goal !== 'string') {
-      return NextResponse.json({ error: 'Valid goal string required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Valid goal string is required' },
+        { status: 400 }
+      );
     }
 
-    console.log('Processing goal:', goal);
+    console.log('Received goal:', goal);
 
-    // Insert goal into Supabase database
-    const { data, error } = await supabase.from('workflows').insert([{ goal }]).select('*');
+    // Insert goal into Supabase with timeout protection
+    const dbPromise = supabase.from('workflows').insert([{ goal }]).select('*');
 
-    if (error) {
-      console.error('Supabase error:', error);
-      return NextResponse.json({ error: `Database error: ${error.message}` }, { status: 500 });
+    const dbResponse = await Promise.race([
+      dbPromise,
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Database timeout')), 10000)
+      )
+    ]) as any;
+
+    if (dbResponse.error) {
+      console.error('Supabase Insert Error:', dbResponse.error);
+      return NextResponse.json(
+        { error: `Database error: ${dbResponse.error.message}` },
+        { status: 500 }
+      );
     }
 
-    console.log('Inserted workflow:', data);
+    console.log('Saved to database:', dbResponse.data);
 
-    // Generate workflow using OpenAI API
+    // Call OpenAI API to generate workflow
     const aiResponse = await openai.chat.completions.create({
       model: 'gpt-4-turbo',
       messages: [
-        { role: 'system', content: 'Generate detailed workflow steps with clear objectives.' },
+        {
+          role: 'system',
+          content: 'Generate a detailed workflow for the user goal with clear steps.',
+        },
         { role: 'user', content: goal },
       ],
-      max_tokens: 1000,
+      temperature: 0.7,
+      max_tokens: 800,
     });
 
     if (!aiResponse.choices || !aiResponse.choices[0]?.message?.content) {
-      throw new Error('Invalid response from OpenAI');
+      throw new Error('Invalid response from OpenAI API');
     }
 
-    console.log('AI response received:', aiResponse.choices[0]?.message?.content);
+    const generatedWorkflow = aiResponse.choices[0].message.content;
+
+    console.log('Generated AI workflow:', generatedWorkflow);
 
     return NextResponse.json({
       success: true,
-      workflow: data[0],
-      generatedWorkflow: aiResponse.choices[0]?.message?.content || '',
+      databaseRecord: dbResponse.data[0],
+      generatedWorkflow,
     });
 
   } catch (error: any) {
