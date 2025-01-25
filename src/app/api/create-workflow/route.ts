@@ -5,10 +5,6 @@ export async function POST(request: Request) {
   try {
     const { goal } = await request.json();
 
-    // Insert workflow data into Supabase
-    const { data, error } = await supabase
-      .from('workflows')
-      .insert([{ goal }]);
 
     if (error) {
       throw new Error(error.message);
