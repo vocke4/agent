@@ -2,11 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import OpenAI from 'openai';
 
-// Extend function timeout directly within the Next.js API runtime config
-export const config = {
-  runtime: 'edge',   // 'nodejs' or 'edge' runtime
-  maxDuration: 30,   // Increase function timeout to 30 seconds
-};
+// Use the correct runtime export
+export const runtime = 'edge';  // Corrected based on Next.js recommendations
 
 // Supabase credentials (ensure they are correctly set in your .env.local)
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_SUPABASE_URL!;
