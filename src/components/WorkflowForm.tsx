@@ -2,7 +2,7 @@
 import { useState } from 'react';
 
 interface WorkflowFormProps {
-  onWorkflowCreated: (id: string) => void;
+  onWorkflowCreated: (workflow: any) => void;
 }
 
 export default function WorkflowForm({ onWorkflowCreated }: WorkflowFormProps) {
@@ -29,9 +29,9 @@ export default function WorkflowForm({ onWorkflowCreated }: WorkflowFormProps) {
       const result = await response.json();
 
       if (result.success) {
-        setMessage('Goal successfully submitted!');
-        onWorkflowCreated(result.workflowId);
-        setGoal(''); // Clear input after submission
+        setMessage(`Workflow created successfully!`);
+        onWorkflowCreated(result.workflow);
+        setGoal(''); // Clear input after successful submission
       } else {
         setMessage('There was an error submitting your goal.');
       }
