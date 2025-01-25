@@ -1,18 +1,11 @@
+// src/app/api/execute-step/route.ts
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { generateChatResponse } from '@/app/utils/openai';
 
-// Environment variable fallback handling
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-
-if (!supabaseUrl || !supabaseKey) {
-  console.error('Supabase environment variables missing');
-  throw new Error('Supabase environment variables are not set correctly.');
-}
-
-console.log('Supabase URL:', supabaseUrl);
-console.log('Supabase Key:', supabaseKey ? 'Loaded' : 'Missing');
+// Supabase connection
+const supabaseUrl = 'https://fvzcxtwxyfhrcqffpfyp.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ2emN4dHd4eWZocmNxZmZwZnlwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzc2NTk5NzgsImV4cCI6MjA1MzIzNTk3OH0.Mnri-YULldfRxGHuz12qVZ_3uCMNs7ycc_24qfUpHrM';
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
@@ -25,11 +18,7 @@ export async function POST(request: Request) {
 
     console.log('Fetching workflow with ID:', workflowId);
 
-    const { data, error } = await supabase
-      .from('workflows')
-      .select('goal')
-      .eq('id', workflowId)
-      .single();
+    const { data, error } = await supabase.from('workflows').select('goal').eq('id', workflowId).single();
 
     if (error) {
       console.error('Supabase query error:', JSON.stringify(error, null, 2));
