@@ -1,18 +1,12 @@
-import React from 'react';
-import '../styles/global.css';  // Import global styles
+import '../globals.css';
+import MainLayout from '@/layouts/MainLayout';
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <head>
-        <title>My App</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-      </head>
-      <body>{children}</body>
+      <body>
+        <MainLayout>{children}</MainLayout>
+      </body>
     </html>
   );
 }
