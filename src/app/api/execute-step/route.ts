@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { generateChatResponse } from '../../utils/openai';  // Use relative path
+import { generateChatResponse } from '@/app/utils/openai';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -10,7 +10,7 @@ const supabase = createClient(
 export async function POST(request: Request) {
   try {
     const { workflowId } = await request.json();
-    
+
     if (!workflowId) {
       return NextResponse.json({ error: 'workflowId is required' }, { status: 400 });
     }
@@ -21,15 +21,21 @@ export async function POST(request: Request) {
       .eq('id', workflowId)
       .single();
 
-    if (error || !data) {
-      return NextResponse.json({ error: 'Workflow not found' }, { status: 404 });
+    if (error) {
+      console.error('Supabase fetch error:', error.message);
+      return NextResponse.json({ error: `Database error: ${error.message || 'Unknown error'}` }, { status: 500 });
+    }
+
+    if (!data) {
+      return NextResponse.json({ error: 'No workflow found' }, { status: 404 });
     }
 
     const aiResponse = await generateChatResponse(data.goal);
 
     return NextResponse.json({ success: true, aiResponse });
+
   } catch (error: any) {
     console.error('Error processing request:', error);
-    return NextResponse.json({ error: error.message || 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ error: `Internal server error: ${error.message || 'Unknown error'}` }, { status: 500 });
   }
 }
