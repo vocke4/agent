@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { openai } from '@/app/utils/openai';
 
 // Debugging: Ensure environment variables are loaded correctly
 console.log('Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL);
@@ -24,9 +25,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Save goal to Supabase 'workflows' table
-    const { data, error } = await supabase
-      .from('workflows')
-      .insert([{ goal }]);
+    const { data, error } = await supabase.from('workflows').insert([{ goal }]);
 
     if (error) {
       console.error('Supabase insert error:', error.message);
@@ -35,39 +34,23 @@ export async function POST(req: NextRequest) {
 
     console.log('Goal saved to database:', data);
 
-    // Send goal to OpenAI API for workflow generation
-    const openAiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        model: "gpt-4-turbo",
-        messages: [
-          { role: "system", content: "You are a helpful assistant that creates workflows." },
-          { role: "user", content: `Please generate a workflow for: ${goal}` }
-        ],
-        function_call: "auto"
-      })
+    // Call OpenAI API to generate workflow
+    const aiResponse = await openai.chat.completions.create({
+      model: 'gpt-4-turbo',
+      messages: [
+        { role: 'system', content: 'You are a helpful assistant that creates workflows.' },
+        { role: 'user', content: `Please generate a workflow for: ${goal}` },
+      ],
     });
 
-    const aiData = await openAiResponse.json();
-
-    if (aiData.error) {
-      console.error('OpenAI API error:', aiData.error.message);
-      throw new Error(`OpenAI error: ${aiData.error.message}`);
+    if (!aiResponse.choices || !aiResponse.choices[0]?.message?.content) {
+      throw new Error('Invalid response from OpenAI API');
     }
 
-    console.log('OpenAI response received:', aiData);
+    const generatedWorkflow = aiResponse.choices[0].message.content;
+    console.log('OpenAI response received:', generatedWorkflow);
 
-    if (aiData.choices && aiData.choices[0]?.message?.function_call) {
-      const workflow = JSON.parse(aiData.choices[0].message.function_call.arguments);
-      console.log('Generated workflow:', workflow);
-      return NextResponse.json({ success: true, workflow });
-    }
-
-    return NextResponse.json({ success: false, message: 'Could not generate workflow' }, { status: 500 });
+    return NextResponse.json({ success: true, workflow: generatedWorkflow });
 
   } catch (err: any) {
     console.error('Error in create-workflow route:', err.message);
