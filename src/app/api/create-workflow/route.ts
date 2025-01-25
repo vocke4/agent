@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import OpenAI from 'openai';
 
-// Server-side environment variables
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -12,12 +11,12 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
 });
 
-// New config format for Next.js 13+
-export const maxDuration = 30; // <-- Fix here
+// Next.js 13+ config
+export const maxDuration = 30;
 
 export async function POST(request: NextRequest) {
   try {
-    // [Keep existing validation logic]
+    // Validate request
     const contentType = request.headers.get('content-type');
     if (!contentType?.includes('application/json')) {
       return NextResponse.json(
@@ -34,22 +33,28 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // [Keep database operation]
-    const { data: dbData, error: dbError } = await supabase
+    // Database operation with proper timeout handling
+    const dbPromise = supabase
       .from('workflows')
       .insert([{ goal }])
-      .select('*')
-      .timeout(10000);
+      .select('*');
 
-    if (dbError) {
-      console.error('Database Error:', dbError);
+    const dbResponse = await Promise.race([
+      dbPromise,
+      new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Database timeout')), 10000)
+      )
+    ]) as any;
+
+    if (dbResponse.error) {
+      console.error('Database Error:', dbResponse.error);
       return NextResponse.json(
-        { error: `Database error: ${dbError.message}` },
+        { error: `Database error: ${dbResponse.error.message}` },
         { status: 500 }
       );
     }
 
-    // [Keep AI processing]
+    // AI processing
     const aiResponse = await openai.chat.completions.create({
       model: 'gpt-4-turbo',
       messages: [
@@ -64,7 +69,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      databaseRecord: dbData?.[0],
+      databaseRecord: dbResponse.data[0],
       generatedWorkflow: aiResponse.choices[0]?.message?.content || '',
     });
 
