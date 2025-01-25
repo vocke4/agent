@@ -4,6 +4,12 @@ import { generateChatResponse } from '@/app/utils/openai';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+
+if (!supabaseUrl || !supabaseKey) {
+  console.error('Supabase environment variables are missing');
+  throw new Error('Supabase environment variables are not set correctly');
+}
+
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 export async function POST(request: Request) {
@@ -14,7 +20,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'workflowId is required' }, { status: 400 });
     }
 
-    // Fetch workflow from Supabase
+    console.log('Fetching workflow with ID:', workflowId);
+
     const { data, error } = await supabase
       .from('workflows')
       .select('goal')
@@ -22,7 +29,7 @@ export async function POST(request: Request) {
       .single();
 
     if (error) {
-      console.error('Supabase fetch error:', error.message);
+      console.error('Supabase query error:', error);
       return NextResponse.json(
         { error: `Database error: ${error.message || 'Unknown error'}` },
         { status: 500 }
@@ -32,6 +39,8 @@ export async function POST(request: Request) {
     if (!data) {
       return NextResponse.json({ error: 'No workflow found' }, { status: 404 });
     }
+
+    console.log('Supabase query result:', data);
 
     const aiResponse = await generateChatResponse(data.goal);
 
