@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "api/create-workflow": {
+      "maxDuration": 30
+    }
+  }
+}
