@@ -61,29 +61,41 @@ export default function WorkflowForm({ onWorkflowCreated }: WorkflowFormProps) {
 
       {message && <p className="message">{message}</p>}
 
-      {workflowResponse && (
-        <div className="workflow-response">
-          <h3>Generated Workflow:</h3>
-          <pre>{workflowResponse}</pre>
-        </div>
-      )}
+      <div className="response-frame">
+        <h3>AI Response:</h3>
+        {loading ? (
+          <p>Generating workflow... Please wait.</p>
+        ) : workflowResponse ? (
+          <pre className="workflow-text">{workflowResponse}</pre>
+        ) : (
+          <p>No response yet. Submit a goal to generate workflow.</p>
+        )}
+      </div>
 
       <style jsx>{`
         .workflow-form {
           display: flex;
           flex-direction: column;
+          align-items: center;
+          justify-content: center;
           gap: 1rem;
-          max-width: 500px;
+          max-width: 600px;
           margin: 0 auto;
+          padding: 20px;
+          border: 1px solid #ccc;
+          border-radius: 8px;
+          background-color: #f9f9f9;
         }
         .input-field {
-          padding: 10px;
+          width: 100%;
+          padding: 12px;
           font-size: 1rem;
           border: 1px solid #ccc;
           border-radius: 5px;
         }
         .submit-button {
-          padding: 10px;
+          width: 100%;
+          padding: 12px;
           font-size: 1rem;
           background-color: #0070f3;
           color: white;
@@ -96,12 +108,23 @@ export default function WorkflowForm({ onWorkflowCreated }: WorkflowFormProps) {
         }
         .message {
           color: red;
+          font-weight: bold;
         }
-        .workflow-response {
-          margin-top: 1rem;
-          padding: 10px;
-          background-color: #f0f0f0;
-          border-left: 5px solid #0070f3;
+        .response-frame {
+          width: 100%;
+          padding: 15px;
+          margin-top: 15px;
+          background-color: #fff;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+          min-height: 150px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .workflow-text {
+          white-space: pre-wrap;
+          word-wrap: break-word;
+          font-size: 1rem;
+          color: #333;
         }
       `}</style>
     </div>
