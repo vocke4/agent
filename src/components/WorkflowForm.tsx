@@ -40,9 +40,12 @@ export default function WorkflowForm({ onWorkflowCreated }: WorkflowFormProps) {
       if (response.ok && result.success) {
         setMessage('Workflow created successfully!');
         onWorkflowCreated(result.workflow);
-        setWorkflowResponse(result.workflow);
+        setWorkflowResponse({
+          id: result.workflow.id,
+          goal: result.workflow.goal,
+        });
         setGeneratedWorkflow(result.generatedWorkflow);
-        setGoal(''); // Clear input after successful submission
+        setGoal('');
       } else {
         setMessage(`Error: ${result.error || 'Something went wrong'}`);
       }
@@ -56,7 +59,7 @@ export default function WorkflowForm({ onWorkflowCreated }: WorkflowFormProps) {
   return (
     <div className="workflow-form">
       <h2>Create a New Workflow</h2>
-      
+
       <input
         type="text"
         value={goal}
@@ -80,7 +83,7 @@ export default function WorkflowForm({ onWorkflowCreated }: WorkflowFormProps) {
             <p><strong>Workflow ID:</strong> {workflowResponse.id}</p>
             <p><strong>Goal:</strong> {workflowResponse.goal}</p>
             <h4>Generated Workflow:</h4>
-            <pre className="workflow-text">{generatedWorkflow}</pre>
+            <pre className="workflow-text">{generatedWorkflow || 'No workflow generated yet.'}</pre>
           </>
         ) : (
           <p>No response yet. Submit a goal to generate workflow.</p>
