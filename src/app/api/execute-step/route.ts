@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { generateChatResponse } from '@/app/utils/openai';
+import { generateChatResponse } from '../../utils/openai';  // Use relative path
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -28,8 +28,8 @@ export async function POST(request: Request) {
     const aiResponse = await generateChatResponse(data.goal);
 
     return NextResponse.json({ success: true, aiResponse });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error processing request:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ error: error.message || 'Internal server error' }, { status: 500 });
   }
 }
