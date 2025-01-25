@@ -21,7 +21,10 @@ export async function POST(req: NextRequest) {
 
     if (!goal) {
       console.warn('No goal provided in request');
-      return NextResponse.json({ success: false, message: 'Goal is required' }, { status: 400 });
+      return NextResponse.json(
+        { success: false, message: 'Goal is required' },
+        { status: 400 }
+      );
     }
 
     // Save goal to Supabase 'workflows' table
@@ -55,9 +58,12 @@ export async function POST(req: NextRequest) {
   } catch (err: any) {
     console.error('Error in create-workflow route:', err.message);
 
-    return NextResponse.json({ error: err.message || 'Internal Server Error' }, {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return NextResponse.json(
+      { error: err.message || 'Internal Server Error' },
+      {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
   }
 }
