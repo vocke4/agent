@@ -2,23 +2,22 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import OpenAI from 'openai';
 
-// Initialize clients once per instance
+// Server-side environment variables
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY! // Service role key
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
 });
 
-export const config = {
-  maxDuration: 30, // Vercel Pro max timeout
-};
+// New config format for Next.js 13+
+export const maxDuration = 30; // <-- Fix here
 
 export async function POST(request: NextRequest) {
   try {
-    // Validate request
+    // [Keep existing validation logic]
     const contentType = request.headers.get('content-type');
     if (!contentType?.includes('application/json')) {
       return NextResponse.json(
@@ -35,12 +34,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Database operation with timeout
+    // [Keep database operation]
     const { data: dbData, error: dbError } = await supabase
       .from('workflows')
       .insert([{ goal }])
       .select('*')
-      .timeout(10000); // 10 second timeout
+      .timeout(10000);
 
     if (dbError) {
       console.error('Database Error:', dbError);
@@ -50,7 +49,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // AI Processing
+    // [Keep AI processing]
     const aiResponse = await openai.chat.completions.create({
       model: 'gpt-4-turbo',
       messages: [
