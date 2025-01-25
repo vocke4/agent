@@ -8,12 +8,6 @@ export async function POST(request: Request) {
   try {
     const { workflowId } = await request.json();
 
-    // Retrieve workflow from Supabase
-    const { data, error } = await supabase
-      .from('workflows')
-      .select('*')
-      .eq('id', workflowId)
-      .single();
 
     if (error || !data) {
       throw new Error('Workflow not found');
