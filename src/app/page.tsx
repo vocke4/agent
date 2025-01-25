@@ -3,10 +3,10 @@ import { useState } from 'react';
 import WorkflowForm from '@/components/WorkflowForm';
 
 export default function Home() {
-  const [workflowId, setWorkflowId] = useState<string | null>(null);
+  const [workflow, setWorkflow] = useState<string | null>(null);
 
-  const handleWorkflowCreated = (id: string) => {
-    setWorkflowId(id);
+  const handleWorkflowCreated = (workflow: string) => {
+    setWorkflow(workflow);
   };
 
   return (
@@ -16,7 +16,7 @@ export default function Home() {
         <p>Automate your tasks efficiently</p>
       </header>
       <WorkflowForm onWorkflowCreated={handleWorkflowCreated} />
-      {workflowId && <p className="feedback-message">Workflow ID: {workflowId}</p>}
+      {workflow && <p className="feedback-message">Generated Workflow: {workflow}</p>}
     </div>
   );
 }
