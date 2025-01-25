@@ -22,21 +22,22 @@ export default function WorkflowForm({ onWorkflowCreated }: WorkflowFormProps) {
     try {
       const response = await fetch('/api/create-workflow', {
         method: 'POST',
-        body: JSON.stringify({ goal }),
         headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ goal }),
       });
 
       const result = await response.json();
 
-      if (result.success) {
-        setMessage(`Workflow created successfully!`);
+      if (response.ok && result.success) {
+        setMessage('Workflow created successfully!');
         onWorkflowCreated(result.workflow);
         setGoal(''); // Clear input after successful submission
       } else {
-        setMessage('There was an error submitting your goal.');
+        setMessage(result.message || 'There was an error submitting your goal.');
       }
     } catch (error) {
       setMessage('Error connecting to the server.');
+      console.error('Error submitting workflow:', error);
     } finally {
       setLoading(false);
     }
