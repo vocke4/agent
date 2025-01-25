@@ -1,15 +1,21 @@
 'use client';
 import { useState } from 'react';
 
+interface Workflow {
+  id: number;
+  goal: string;
+}
+
 interface WorkflowFormProps {
-  onWorkflowCreated: (workflow: any) => void;
+  onWorkflowCreated: (workflow: Workflow) => void;
 }
 
 export default function WorkflowForm({ onWorkflowCreated }: WorkflowFormProps) {
   const [goal, setGoal] = useState('');
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [workflowResponse, setWorkflowResponse] = useState<string | null>(null);
+  const [workflowResponse, setWorkflowResponse] = useState<Workflow | null>(null);
+  const [generatedWorkflow, setGeneratedWorkflow] = useState<string | null>(null);
 
   const handleSubmit = async () => {
     if (!goal.trim()) {
@@ -18,8 +24,9 @@ export default function WorkflowForm({ onWorkflowCreated }: WorkflowFormProps) {
     }
 
     setLoading(true);
-    setMessage('');
+    setMessage(null);
     setWorkflowResponse(null);
+    setGeneratedWorkflow(null);
 
     try {
       const response = await fetch('/api/create-workflow', {
@@ -33,7 +40,8 @@ export default function WorkflowForm({ onWorkflowCreated }: WorkflowFormProps) {
       if (response.ok && result.success) {
         setMessage('Workflow created successfully!');
         onWorkflowCreated(result.workflow);
-        setWorkflowResponse(result.generatedWorkflow);
+        setWorkflowResponse(result.workflow);
+        setGeneratedWorkflow(result.generatedWorkflow);
         setGoal(''); // Clear input after successful submission
       } else {
         setMessage(`Error: ${result.error || 'Something went wrong'}`);
@@ -48,6 +56,7 @@ export default function WorkflowForm({ onWorkflowCreated }: WorkflowFormProps) {
   return (
     <div className="workflow-form">
       <h2>Create a New Workflow</h2>
+      
       <input
         type="text"
         value={goal}
@@ -55,6 +64,7 @@ export default function WorkflowForm({ onWorkflowCreated }: WorkflowFormProps) {
         placeholder="Enter your goal"
         className="input-field"
       />
+
       <button onClick={handleSubmit} disabled={loading} className="submit-button">
         {loading ? 'Processing...' : 'Submit'}
       </button>
@@ -66,7 +76,12 @@ export default function WorkflowForm({ onWorkflowCreated }: WorkflowFormProps) {
         {loading ? (
           <p>Generating workflow... Please wait.</p>
         ) : workflowResponse ? (
-          <pre className="workflow-text">{workflowResponse}</pre>
+          <>
+            <p><strong>Workflow ID:</strong> {workflowResponse.id}</p>
+            <p><strong>Goal:</strong> {workflowResponse.goal}</p>
+            <h4>Generated Workflow:</h4>
+            <pre className="workflow-text">{generatedWorkflow}</pre>
+          </>
         ) : (
           <p>No response yet. Submit a goal to generate workflow.</p>
         )}
@@ -85,6 +100,7 @@ export default function WorkflowForm({ onWorkflowCreated }: WorkflowFormProps) {
           border: 1px solid #ccc;
           border-radius: 8px;
           background-color: #f9f9f9;
+          box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
         }
         .input-field {
           width: 100%;
@@ -92,6 +108,12 @@ export default function WorkflowForm({ onWorkflowCreated }: WorkflowFormProps) {
           font-size: 1rem;
           border: 1px solid #ccc;
           border-radius: 5px;
+          outline: none;
+          transition: all 0.3s ease;
+        }
+        .input-field:focus {
+          border-color: #0070f3;
+          box-shadow: 0 0 5px rgba(0, 112, 243, 0.5);
         }
         .submit-button {
           width: 100%;
@@ -102,9 +124,14 @@ export default function WorkflowForm({ onWorkflowCreated }: WorkflowFormProps) {
           border: none;
           border-radius: 5px;
           cursor: pointer;
+          transition: background-color 0.3s;
+        }
+        .submit-button:hover {
+          background-color: #005bb5;
         }
         .submit-button:disabled {
           background-color: #ccc;
+          cursor: not-allowed;
         }
         .message {
           color: red;
@@ -119,12 +146,15 @@ export default function WorkflowForm({ onWorkflowCreated }: WorkflowFormProps) {
           border-radius: 5px;
           min-height: 150px;
           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          overflow-wrap: break-word;
+          font-family: monospace;
         }
         .workflow-text {
           white-space: pre-wrap;
           word-wrap: break-word;
           font-size: 1rem;
           color: #333;
+          line-height: 1.5;
         }
       `}</style>
     </div>
