@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import WorkflowForm from '@/components/WorkflowForm';
 import { Task } from '@/types';
 
 export default function Home() {
@@ -33,15 +34,22 @@ export default function Home() {
   }, [goal]);
 
   return (
-    <div>
-      <h1>Agent Workflow</h1>
-      <input
-        type="text"
-        placeholder="Enter your goal"
-        value={goal}
-        onChange={(e) => setGoal(e.target.value)}
-      />
-      {workflowId && <p>Workflow ID: {workflowId}</p>}
+    <div className="container">
+      <header>
+        <h1>Agent Workflow</h1>
+        <p>Automate your tasks efficiently</p>
+      </header>
+      <WorkflowForm />
+      <div className="card">
+        <h2>Your Goal</h2>
+        <input
+          type="text"
+          placeholder="Enter your goal"
+          value={goal}
+          onChange={(e) => setGoal(e.target.value)}
+        />
+        {workflowId && <p>Workflow ID: {workflowId}</p>}
+      </div>
     </div>
   );
 }
