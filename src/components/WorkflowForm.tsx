@@ -1,7 +1,11 @@
 'use client';
 import { useState } from 'react';
 
-export default function WorkflowForm() {
+interface WorkflowFormProps {
+  onWorkflowCreated: (id: string) => void;
+}
+
+export default function WorkflowForm({ onWorkflowCreated }: WorkflowFormProps) {
   const [goal, setGoal] = useState('');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -26,6 +30,8 @@ export default function WorkflowForm() {
 
       if (result.success) {
         setMessage('Goal successfully submitted!');
+        onWorkflowCreated(result.workflowId);
+        setGoal(''); // Clear input after submission
       } else {
         setMessage('There was an error submitting your goal.');
       }
@@ -37,26 +43,19 @@ export default function WorkflowForm() {
   };
 
   return (
-    <div className="container">
-      <header>
-        <h1>Agent Workflow</h1>
-        <p>Automate your tasks efficiently</p>
-      </header>
-      <div className="card">
-        <h2>Your Goal</h2>
-        <input
-          id="goal-input"
-          type="text"
-          placeholder="Enter your goal"
-          value={goal}
-          onChange={(e) => setGoal(e.target.value)}
-        />
-        <button id="submit-btn" onClick={handleSubmit} disabled={loading}>
-          {loading ? 'Processing...' : 'Start'}
-        </button>
-        {message && <p className="feedback-message">{message}</p>}
-      </div>
-      <div id="output"></div>
+    <div className="card">
+      <h2>Your Goal</h2>
+      <input
+        id="goal-input"
+        type="text"
+        placeholder="Enter your goal"
+        value={goal}
+        onChange={(e) => setGoal(e.target.value)}
+      />
+      <button id="submit-btn" onClick={handleSubmit} disabled={loading}>
+        {loading ? 'Processing...' : 'Start'}
+      </button>
+      {message && <p className="feedback-message">{message}</p>}
     </div>
   );
 }
