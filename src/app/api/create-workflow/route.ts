@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+// Use Vercel's environment-based connection here
 
 export async function POST(request: Request) {
   try {
