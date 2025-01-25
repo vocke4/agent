@@ -15,7 +15,8 @@
     "module": "esnext",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "@/utils/*": ["src/utils/*"]
     },
     "types": ["next", "node"],
     "strictNullChecks": true,
