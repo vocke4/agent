@@ -14,6 +14,10 @@ yarn-error.log*
 # Dependencies
 node_modules/
 
+# envelope local
+.env.local
+
+
 # Build/Artifacts
 .next/
 out/
