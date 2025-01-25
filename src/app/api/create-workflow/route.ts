@@ -4,12 +4,11 @@ import { createClient } from '@supabase/supabase-js';
 // Initialize Supabase client using server-side secure environment variables
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY! // Use the secure service key instead
+  process.env.SUPABASE_SERVICE_ROLE_KEY! // Ensure this key is set
 );
 
 export async function POST(request: Request) {
   try {
-    // Parse the JSON body
     const { goal } = await request.json();
 
     if (!goal) {
@@ -19,9 +18,7 @@ export async function POST(request: Request) {
     console.log('Received goal:', goal);
 
     // Insert data into the Supabase table
-    const { data, error } = await supabase
-      .from('workflows')
-      .insert([{ goal }]);
+    const { data, error } = await supabase.from('workflows').insert([{ goal }]);
 
     if (error) {
       console.error('Supabase insert error:', error);
@@ -34,7 +31,6 @@ export async function POST(request: Request) {
     console.log('Inserted workflow:', data);
 
     return NextResponse.json({ success: true, data });
-
   } catch (error: any) {
     console.error('Internal server error:', error);
     return NextResponse.json(
