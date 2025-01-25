@@ -6,7 +6,8 @@ if (!openaiKey) {
   throw new Error('OPENAI_API_KEY is missing - add it to Vercel environment variables');
 }
 
-const openai = new OpenAI({
+// Corrected export of OpenAI instance
+export const openai = new OpenAI({
   apiKey: openaiKey,
 });
 
