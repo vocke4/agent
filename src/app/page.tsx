@@ -4,23 +4,27 @@ import { useState } from 'react';
 
 export default function Home() {
   const [goal, setGoal] = useState('');
-  const [response, setResponse] = useState(null);
+  const [response, setResponse] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setResponse(null);
+
     try {
       const res = await fetch('/api/create-workflow', {
         method: 'POST',
         body: JSON.stringify({ goal }),
         headers: { 'Content-Type': 'application/json' },
       });
+
       const data = await res.json();
       setResponse(data.workflow || data.error);
     } catch (err) {
       setResponse('Error processing request.');
     }
+
     setLoading(false);
   };
 
