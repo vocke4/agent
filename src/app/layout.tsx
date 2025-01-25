@@ -1,12 +1,14 @@
-import '../globals.css';
-import MainLayout from '@/layouts/MainLayout';
+// src/app/layout.tsx
+import '../styles/global.css';
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
-      <body>
-        <MainLayout>{children}</MainLayout>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
