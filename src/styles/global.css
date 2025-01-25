@@ -1,0 +1,135 @@
+/* High-End Vaporwave Aesthetic */
+body {
+  background: linear-gradient(135deg, #ff00cc, #333399, #00ccff);
+  color: #fff;
+  font-family: 'Montserrat', sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 1rem;
+}
+
+.container {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  box-shadow: 0 0 30px rgba(255, 0, 204, 0.5);
+  padding: 2rem;
+  max-width: 800px;
+  width: 100%;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 3rem;
+  margin: 0;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255, 0, 204, 0.8);
+}
+
+header p {
+  font-size: 1.2rem;
+  color: #00ffcc;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.card h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  margin: 0 0 1rem;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255, 0, 204, 0.8);
+}
+
+label {
+  display: block;
+  margin: 0.5rem 0 0.2rem;
+  color: #00ffcc;
+}
+
+input, textarea, select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  font-family: 'Montserrat', sans-serif;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: #00ffcc;
+  outline: none;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #ff00cc, #00ccff);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  margin: 0.5rem;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: bold;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 15px rgba(255, 0, 204, 0.8);
+}
+
+.timer {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255, 0, 204, 0.8);
+}
+
+.manual-entry input {
+  width: 60px;
+  margin-right: 0.5rem;
+}
+
+.notes textarea {
+  height: 80px;
+}
+
+#timesheet-output, #invoice-output {
+  margin-top: 1rem;
+  font-size: 1.2rem;
+  color: #fff;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 600px) {
+  .container {
+    padding: 1rem;
+  }
+
+  header h1 {
+    font-size: 2rem;
+  }
+
+  .timer {
+    font-size: 2rem;
+  }
+}
