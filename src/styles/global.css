@@ -14,12 +14,25 @@ body {
 
 .container {
   background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(20px);
   border-radius: 20px;
   box-shadow: 0 0 30px rgba(255, 0, 204, 0.5);
   padding: 2rem;
   max-width: 800px;
   width: 100%;
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+/* Smooth fade-in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 header {
@@ -31,8 +44,8 @@ header h1 {
   font-family: 'Playfair Display', serif;
   font-size: 3rem;
   margin: 0;
-  color: #fff;
-  text-shadow: 0 0 10px rgba(255, 0, 204, 0.8);
+  color: #ffffff;
+  text-shadow: 0 0 15px rgba(255, 0, 204, 0.8);
 }
 
 header p {
@@ -40,38 +53,36 @@ header p {
   color: #00ffcc;
 }
 
+/* Card Component */
 .card {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(10px);
   border-radius: 15px;
   padding: 1.5rem;
   margin-bottom: 2rem;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease-in-out;
 }
 
-.card h2 {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.8rem;
-  margin: 0 0 1rem;
-  color: #fff;
-  text-shadow: 0 0 10px rgba(255, 0, 204, 0.8);
+.card:hover {
+  transform: scale(1.02);
 }
 
-label {
-  display: block;
-  margin: 0.5rem 0 0.2rem;
-  color: #00ffcc;
-}
-
+/* Input Fields */
 input, textarea, select {
   width: 100%;
-  padding: 0.5rem;
+  padding: 12px;
   border: 2px solid rgba(255, 255, 255, 0.3);
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
   border-radius: 10px;
   margin-bottom: 1rem;
+  font-size: 1rem;
   font-family: 'Montserrat', sans-serif;
+}
+
+input::placeholder, textarea::placeholder {
+  color: rgba(255, 255, 255, 0.7);
 }
 
 input:focus, textarea:focus, select:focus {
@@ -79,6 +90,7 @@ input:focus, textarea:focus, select:focus {
   outline: none;
 }
 
+/* Button Styles */
 button {
   padding: 12px 24px;
   background: linear-gradient(135deg, #ff00cc, #00ccff);
@@ -94,7 +106,7 @@ button {
 }
 
 button:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px);
   box-shadow: 0 0 15px rgba(255, 0, 204, 0.8);
 }
 
@@ -103,33 +115,26 @@ button:disabled {
   cursor: not-allowed;
 }
 
+/* Response Box */
+.response-box {
+  margin-top: 20px;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+  color: #fff;
+  overflow-y: auto;
+  max-height: 300px;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* Message Feedback */
 .feedback-message {
   font-size: 1rem;
   color: #00ffcc;
   margin-top: 1rem;
   text-align: center;
-}
-
-.timer {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
-  color: #fff;
-  text-shadow: 0 0 10px rgba(255, 0, 204, 0.8);
-}
-
-.manual-entry input {
-  width: 60px;
-  margin-right: 0.5rem;
-}
-
-.notes textarea {
-  height: 80px;
-}
-
-#timesheet-output, #invoice-output {
-  margin-top: 1rem;
-  font-size: 1.2rem;
-  color: #fff;
 }
 
 /* Mobile Responsiveness */
@@ -142,7 +147,7 @@ button:disabled {
     font-size: 2rem;
   }
 
-  .timer {
-    font-size: 2rem;
+  .response-box {
+    font-size: 0.9rem;
   }
 }
