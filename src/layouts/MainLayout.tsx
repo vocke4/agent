@@ -1,7 +1,9 @@
 import Link from 'next/link';
 import { Rocket } from 'lucide-react';
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function MainLayout({ children }: { 
+  children: React.ReactNode 
+}) {
   return (
     <div className="min-h-screen flex flex-col">
       <nav className="bg-gray-900/80 backdrop-blur border-b border-gray-800">
