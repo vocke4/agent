@@ -6,26 +6,22 @@ if (!openaiKey) {
   throw new Error('OPENAI_API_KEY is missing - add it to Vercel environment variables');
 }
 
+// Initialize OpenAI with API key
 export const openai = new OpenAI({
   apiKey: openaiKey,
 });
 
-export async function generateChatResponse(prompt: string): Promise<string> {
+export async function generateChatResponse(prompt: string) {
   try {
     const response = await openai.chat.completions.create({
-      model: 'gpt-4',
+      model: 'gpt-4o-mini',  // Updated to GPT-4o Mini
       messages: [{ role: 'user', content: prompt }],
-      temperature: 0.7,
-      max_tokens: 500,
+      temperature: 0.7, // You can adjust for creativity
+      max_tokens: 3000,  // Adjust the response length if needed
     });
-
-    if (!response.choices || !response.choices[0]?.message?.content) {
-      throw new Error('Invalid response structure from OpenAI');
-    }
-
     return response.choices[0].message.content;
   } catch (error) {
     console.error('Error fetching OpenAI response:', error);
-    throw new Error(`Failed to fetch response: ${(error as any).message || error}`);
+    throw new Error('Failed to fetch response from OpenAI');
   }
 }
