@@ -1,21 +1,21 @@
 'use client';
 import { useState } from 'react';
+import { Loader2, Rocket } from 'lucide-react';
 
-export default function Page() {
+export default function Home() {
   const [goal, setGoal] = useState('');
   const [response, setResponse] = useState<string | null>(null);
-  const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async () => {
     if (!goal.trim()) {
-      setMessage('Please enter a valid goal.');
+      setError('Please enter a valid goal');
       return;
     }
 
     setLoading(true);
-    setMessage('');
-    setResponse(null);
+    setError(null);
 
     try {
       const res = await fetch('/api/create-workflow', {
@@ -24,118 +24,83 @@ export default function Page() {
         body: JSON.stringify({ goal }),
       });
 
-      const result = await res.json();
-
-      if (res.ok && result.success) {
-        setMessage('Workflow created successfully!');
-        setResponse(result.generatedWorkflow);
-        setGoal(''); // Clear input after success
-      } else {
-        if (typeof result.error === 'string') {
-          setMessage(result.error);
-        } else if (
-          result.error &&
-          typeof result.error === 'object' &&
-          'message' in result.error
-        ) {
-          setMessage((result.error as { message: string }).message);
-        } else {
-          setMessage('Something went wrong');
-        }
-      }
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setResponse(err.message);
-      } else {
-        setResponse('An unknown error occurred.');
-      }
+      if (!res.ok) throw new Error('Request failed');
+      
+      const data = await res.json();
+      setResponse(data.generatedWorkflow);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="workflow-form">
-      <h2>Create a New Workflow</h2>
-      <input
-        type="text"
-        value={goal}
-        onChange={(e) => setGoal(e.target.value)}
-        placeholder="Enter your goal"
-        className="input-field"
-      />
-      <button onClick={handleSubmit} disabled={loading} className="submit-button">
-        {loading ? 'Processing...' : 'Submit'}
-      </button>
-
-      {message && <p className="message">{message}</p>}
-
-      <div className="response-frame">
-        <h3>AI Response:</h3>
-        {loading ? (
-          <p>Generating workflow... Please wait.</p>
-        ) : response ? (
-          <pre className="workflow-text">{response}</pre>
-        ) : (
-          <p>No response yet. Submit a goal to generate workflow.</p>
-        )}
+    <div className="container">
+      <div className="text-center mb-8">
+        <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">
+          AI Workflow Architect
+        </h1>
+        <p className="text-gray-400">
+          Transform your goals into executable workflows with AI precision
+        </p>
       </div>
 
-      <style jsx>{`
-        .workflow-form {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          gap: 1rem;
-          max-width: 600px;
-          margin: 0 auto;
-          padding: 20px;
-          border: 1px solid #ccc;
-          border-radius: 8px;
-          background-color: #f9f9f9;
-        }
-        .input-field {
-          width: 100%;
-          padding: 12px;
-          font-size: 1rem;
-          border: 1px solid #ccc;
-          border-radius: 5px;
-        }
-        .submit-button {
-          width: 100%;
-          padding: 12px;
-          font-size: 1rem;
-          background-color: #0070f3;
-          color: white;
-          border: none;
-          border-radius: 5px;
-          cursor: pointer;
-        }
-        .submit-button:disabled {
-          background-color: #ccc;
-        }
-        .message {
-          color: red;
-          font-weight: bold;
-        }
-        .response-frame {
-          width: 100%;
-          padding: 15px;
-          margin-top: 15px;
-          background-color: #fff;
-          border: 1px solid #ccc;
-          border-radius: 5px;
-          min-height: 150px;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        .workflow-text {
-          white-space: pre-wrap;
-          word-wrap: break-word;
-          font-size: 1rem;
-          color: #333;
-        }
-      `}</style>
+      <div className="space-y-6">
+        <div className="space-y-4">
+          <label className="block text-sm font-medium text-gray-300">
+            Your Objective
+          </label>
+          <textarea
+            value={goal}
+            onChange={(e) => setGoal(e.target.value)}
+            placeholder="Example: Create a marketing campaign for a new SaaS product..."
+            rows={3}
+            className="w-full resize-none"
+          />
+
+          <button 
+            onClick={handleSubmit}
+            disabled={loading}
+            className="w-full flex items-center justify-center gap-2"
+          >
+            {loading ? (
+              <>
+                <Loader2 className="h-5 w-5 animate-spin" />
+                Architecting Workflow...
+              </>
+            ) : (
+              <>
+                <Rocket className="h-5 w-5" />
+                Generate Workflow
+              </>
+            )}
+          </button>
+        </div>
+
+        {error && (
+          <div className="alert alert-error">
+            <strong>Error:</strong> {error}
+          </div>
+        )}
+
+        {response && (
+          <div className="bg-gray-800 rounded-lg p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold">Generated Workflow</h2>
+              <button 
+                onClick={() => navigator.clipboard.writeText(response)}
+                className="text-sm text-indigo-400 hover:text-indigo-300"
+              >
+                Copy to Clipboard
+              </button>
+            </div>
+            <pre className="whitespace-pre-wrap break-words font-mono text-sm bg-gray-900/50 p-4 rounded-lg overflow-x-auto">
+              {response}
+            </pre>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
