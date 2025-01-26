@@ -1,7 +1,6 @@
 'use client';
 import { useState } from 'react';
 
-// Define a type for messages
 interface Message {
   question: string;
   response: string;
@@ -88,6 +87,7 @@ export default function WorkflowForm() {
           border-radius: 10px;
           backdrop-filter: blur(10px);
           background: rgba(255, 255, 255, 0.1);
+          color: #fff;
         }
         .input-field {
           width: 100%;
@@ -120,7 +120,8 @@ export default function WorkflowForm() {
           width: 100%;
           margin-top: 15px;
           padding: 15px;
-          background: #fff;
+          background: rgba(0, 0, 0, 0.8);
+          color: #fff;
           border-radius: 5px;
           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
           overflow-y: auto;
