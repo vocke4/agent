@@ -1,113 +1,73 @@
-/* High-End Vaporwave Aesthetic */
-body {
-  background: linear-gradient(135deg, #ff00cc, #333399, #00ccff);
-  color: #fff;
-  font-family: 'Montserrat', sans-serif;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --primary: #6366f1;
+  --surface: #0f172a;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --error: #ef4444;
+  --success: #22c55e;
+}
+
+* {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+}
+
+body {
+  background: var(--surface);
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  line-height: 1.6;
   min-height: 100vh;
-  padding: 1rem;
-}
-
-.container {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(20px);
-  border-radius: 20px;
-  box-shadow: 0 0 30px rgba(255, 0, 204, 0.5);
   padding: 2rem;
+}
+
+/* Unified Container Style */
+.container {
+  background: rgba(30, 41, 59, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  backdrop-filter: blur(12px);
   max-width: 800px;
-  width: 100%;
-  animation: fadeIn 0.8s ease-in-out;
+  margin: 0 auto;
+  padding: 2rem;
 }
 
-/* Smooth fade-in animation */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-header {
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-header h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: 3rem;
-  margin: 0;
-  color: #ffffff;
-  text-shadow: 0 0 15px rgba(255, 0, 204, 0.8);
-}
-
-header p {
-  font-size: 1.2rem;
-  color: #00ffcc;
-}
-
-/* Card Component */
-.card {
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
-  border-radius: 15px;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease-in-out;
-}
-
-.card:hover {
-  transform: scale(1.02);
-}
-
-/* Input Fields */
+/* Enhanced Input Fields */
 input, textarea, select {
   width: 100%;
-  padding: 12px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  background: rgba(255, 255, 255, 0.2);
-  color: #ffffff;
-  border-radius: 10px;
-  margin-bottom: 1rem;
-  font-size: 1rem;
-  font-family: 'Montserrat', sans-serif;
+  padding: 0.75rem;
+  background: rgba(15, 23, 42, 0.7);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  color: var(--text-primary);
+  transition: all 0.2s ease;
 }
 
-input::placeholder, textarea::placeholder {
-  color: rgba(255, 255, 255, 0.7);
+input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
 }
 
-input:focus, textarea:focus, select:focus {
-  border-color: #00ffcc;
-  outline: none;
-}
-
-/* Button Styles */
+/* Modern Button System */
 button {
-  padding: 12px 24px;
-  background: linear-gradient(135deg, #ff00cc, #00ccff);
-  color: #fff;
+  padding: 0.75rem 1.5rem;
+  background: var(--primary);
+  color: white;
   border: none;
-  border-radius: 20px;
+  border-radius: 0.5rem;
+  font-weight: 600;
   cursor: pointer;
-  font-size: 1.2rem;
-  font-weight: bold;
-  outline: none;
-  transition: all 0.3s ease-in-out;
-  margin-top: 1rem;
+  transition: transform 0.1s ease, opacity 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 button:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 0 15px rgba(255, 0, 204, 0.8);
+  transform: translateY(-1px);
 }
 
 button:disabled {
@@ -115,39 +75,30 @@ button:disabled {
   cursor: not-allowed;
 }
 
-/* Response Box */
-.response-box {
-  margin-top: 20px;
+/* Unified Feedback System */
+.alert {
   padding: 1rem;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
-  color: #fff;
-  overflow-y: auto;
-  max-height: 300px;
-  font-size: 1rem;
-  line-height: 1.5;
+  border-radius: 0.5rem;
+  margin: 1rem 0;
 }
 
-/* Message Feedback */
-.feedback-message {
-  font-size: 1rem;
-  color: #00ffcc;
-  margin-top: 1rem;
-  text-align: center;
+.alert-error {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid var(--error);
+  color: var(--error);
 }
 
-/* Mobile Responsiveness */
-@media (max-width: 600px) {
-  .container {
-    padding: 1rem;
-  }
+.alert-success {
+  background: rgba(34, 197, 94, 0.15);
+  border: 1px solid var(--success);
+  color: var(--success);
+}
 
-  header h1 {
-    font-size: 2rem;
-  }
+.loading-spinner {
+  animation: spin 1s linear infinite;
+}
 
-  .response-box {
-    font-size: 0.9rem;
-  }
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
