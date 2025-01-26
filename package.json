@@ -10,10 +10,12 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.48.1",
     "autoprefixer": "^10.4.20",
-    "openai": "^4.0.0",
+    "axios": "^1.7.9",
+    "openai": "^4.80.1",
     "postcss": "^8.5.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-query": "^3.39.3",
     "tailwindcss": "^4.0.0"
   },
   "devDependencies": {

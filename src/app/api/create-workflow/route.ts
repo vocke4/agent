@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import OpenAI from 'openai';
+import { openai } from '@/app/utils/openai';
 
 // Ensure environment variables are available
 const requiredEnvVars = [
@@ -22,17 +22,12 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_SUPABASE_SERVICE_ROLE_KEY!
 );
 
-// Initialize OpenAI client
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY!,
-});
-
 // Ensure optimal Next.js runtime
 export const runtime = 'edge';
 
 export async function POST(request: NextRequest) {
   try {
-    // Validate request body
+    // Validate request content type
     const contentType = request.headers.get('content-type');
     if (!contentType?.includes('application/json')) {
       return NextResponse.json(
@@ -52,13 +47,16 @@ export async function POST(request: NextRequest) {
     console.log('Received goal:', goal);
 
     // Insert goal into Supabase with timeout protection
-    const dbPromise = supabase.from('workflows').insert([{ goal }]).select('*');
+    const dbPromise = supabase
+      .from('workflows')
+      .insert([{ goal }])
+      .select('*');
 
     const dbResponse = await Promise.race([
       dbPromise,
       new Promise((_, reject) =>
         setTimeout(() => reject(new Error('Database timeout')), 10000)
-      )
+      ),
     ]) as any;
 
     if (dbResponse.error) {
