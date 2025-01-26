@@ -1,42 +1,62 @@
 'use client';
-
 import { useState } from 'react';
-import { useMutation } from 'react-query';
 
-export default function ChatInterface() {
+export default function Page() {
   const [goal, setGoal] = useState('');
   const [response, setResponse] = useState<string | null>(null);
-
-  const { mutate, isLoading, isError, error } = useMutation(async (goal: string) => {
-    const res = await fetch('/api/create-workflow', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ goal }),
-    });
-
-    if (!res.ok) {
-      throw new Error('Failed to get response from OpenAI');
-    }
-
-    const data = await res.json();
-    if (!data.success) {
-      throw new Error(data.error || 'Unknown error');
-    }
-
-    return data.workflow;
-  });
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
-    if (!goal.trim()) return alert('Please enter a goal');
-    mutate(goal, {
-      onSuccess: (data) => setResponse(data),
-      onError: (err) => alert(err.message),
-    });
+    if (!goal.trim()) {
+      setMessage('Please enter a valid goal.');
+      return;
+    }
+
+    setLoading(true);
+    setMessage('');
+    setResponse(null);
+
+    try {
+      const res = await fetch('/api/create-workflow', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ goal }),
+      });
+
+      const result = await res.json();
+
+      if (res.ok && result.success) {
+        setMessage('Workflow created successfully!');
+        setResponse(result.generatedWorkflow);
+        setGoal(''); // Clear input after success
+      } else {
+        if (typeof result.error === 'string') {
+          setMessage(result.error);
+        } else if (
+          result.error &&
+          typeof result.error === 'object' &&
+          'message' in result.error
+        ) {
+          setMessage((result.error as { message: string }).message);
+        } else {
+          setMessage('Something went wrong');
+        }
+      }
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setResponse(err.message);
+      } else {
+        setResponse('An unknown error occurred.');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="chat-container">
-      <h1>AI Workflow Generator</h1>
+    <div className="workflow-form">
+      <h2>Create a New Workflow</h2>
       <input
         type="text"
         value={goal}
@@ -44,32 +64,43 @@ export default function ChatInterface() {
         placeholder="Enter your goal"
         className="input-field"
       />
-      <button onClick={handleSubmit} disabled={isLoading} className="submit-button">
-        {isLoading ? 'Processing...' : 'Submit'}
+      <button onClick={handleSubmit} disabled={loading} className="submit-button">
+        {loading ? 'Processing...' : 'Submit'}
       </button>
 
-      {isError && <p className="error-message">{error?.message}</p>}
+      {message && <p className="message">{message}</p>}
 
       <div className="response-frame">
         <h3>AI Response:</h3>
-        {response ? <pre>{response}</pre> : <p>No response yet.</p>}
+        {loading ? (
+          <p>Generating workflow... Please wait.</p>
+        ) : response ? (
+          <pre className="workflow-text">{response}</pre>
+        ) : (
+          <p>No response yet. Submit a goal to generate workflow.</p>
+        )}
       </div>
 
       <style jsx>{`
-        .chat-container {
+        .workflow-form {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 1rem;
           max-width: 600px;
-          margin: auto;
+          margin: 0 auto;
           padding: 20px;
           border: 1px solid #ccc;
           border-radius: 8px;
           background-color: #f9f9f9;
-          text-align: center;
         }
         .input-field {
           width: 100%;
-          padding: 10px;
+          padding: 12px;
           font-size: 1rem;
-          margin-bottom: 10px;
+          border: 1px solid #ccc;
+          border-radius: 5px;
         }
         .submit-button {
           width: 100%;
@@ -78,17 +109,31 @@ export default function ChatInterface() {
           background-color: #0070f3;
           color: white;
           border: none;
+          border-radius: 5px;
           cursor: pointer;
         }
-        .response-frame {
-          margin-top: 20px;
-          padding: 10px;
-          background: #fff;
-          border: 1px solid #ddd;
+        .submit-button:disabled {
+          background-color: #ccc;
         }
-        .error-message {
+        .message {
           color: red;
           font-weight: bold;
+        }
+        .response-frame {
+          width: 100%;
+          padding: 15px;
+          margin-top: 15px;
+          background-color: #fff;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+          min-height: 150px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .workflow-text {
+          white-space: pre-wrap;
+          word-wrap: break-word;
+          font-size: 1rem;
+          color: #333;
         }
       `}</style>
     </div>
