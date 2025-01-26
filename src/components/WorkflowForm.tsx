@@ -1,33 +1,86 @@
-import Link from 'next/link';
+'use client';
+import { useState } from 'react';
+import { Clipboard } from 'lucide-react';
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+interface Message {
+  question: string;
+  response: string;
+}
+
+export default function WorkflowForm() {
+  const [goal, setGoal] = useState('');
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+
+  const handleSubmit = async () => {
+    if (!goal.trim()) {
+      setMessage('Please enter a valid goal.');
+      return;
+    }
+
+    setLoading(true);
+    setMessage('');
+
+    try {
+      const response = await fetch('/api/create-workflow', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ goal }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        setMessages((prev) => [
+          ...prev,
+          { question: goal, response: result.generatedWorkflow },
+        ]);
+        setGoal('');
+      } else {
+        setMessage(`Error: ${result.error || 'Something went wrong'}`);
+      }
+    } catch (error) {
+      setMessage('An unexpected error occurred. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen flex flex-col">
-      <nav className="bg-gray-900/80 backdrop-blur border-b border-gray-800">
-        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-          <Link href="/" className="text-xl font-bold text-indigo-400">
-            Agentic Studio
-          </Link>
-          <div className="flex gap-4">
-            <button className="text-gray-300 hover:text-indigo-400 transition-colors">
-              History
-            </button>
-            <button className="text-gray-300 hover:text-indigo-400 transition-colors">
-              Settings
-            </button>
-          </div>
-        </div>
-      </nav>
+    <div className="workflow-container">
+      <h2 className="workflow-title">AI Workflow Architect</h2>
+      <p className="workflow-subtitle">
+        Transform your goals into executable workflows with AI precision
+      </p>
+      <div className="form-group">
+        <input
+          type="text"
+          value={goal}
+          onChange={(e) => setGoal(e.target.value)}
+          placeholder="Example: Create a marketing campaign for a new SaaS product..."
+          className="input-field"
+        />
+        <button onClick={handleSubmit} disabled={loading} className="submit-button">
+          {loading ? 'Generating...' : <><Clipboard className="icon" /> Generate Workflow</>}
+        </button>
+      </div>
 
-      <main className="container mx-auto px-4 py-8 flex-1">
-        {children}
-      </main>
+      {message && <p className="error-message">{message}</p>}
 
-      <footer className="bg-gray-900/80 backdrop-blur border-t border-gray-800 mt-8">
-        <div className="container mx-auto px-4 py-4 text-center text-gray-400">
-          © 2024 Agentic Studio. Empower your workflows.
-        </div>
-      </footer>
+      <div className="response-frame">
+        <h3 className="response-title">Generated Workflow</h3>
+        {messages.length === 0 ? (
+          <p className="no-response">Enter your objective to generate a workflow.</p>
+        ) : (
+          messages.map((msg, index) => (
+            <div key={index} className="response-item">
+              <p className="question-text"><strong>Objective:</strong> {msg.question}</p>
+              <pre className="workflow-text">{msg.response}</pre>
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 }
