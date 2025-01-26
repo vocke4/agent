@@ -31,9 +31,9 @@ export default function WorkflowForm() {
       const result = await response.json();
 
       if (response.ok && result.success) {
-        setMessages((prev) => [
+        setMessages((prev: Message[]) => [
           ...prev,
-          { question: goal, response: result.generatedWorkflow },
+          { question: goal, response: result.generatedWorkflow || 'No response' },
         ]);
         setGoal('');
       } else {
@@ -95,6 +95,8 @@ export default function WorkflowForm() {
           font-size: 2rem;
           font-weight: bold;
           color: #ffffff;
+          text-align: center;
+          text-shadow: 0px 0px 5px rgba(255, 0, 204, 0.8);
         }
         .input-field {
           width: 100%;
@@ -119,12 +121,20 @@ export default function WorkflowForm() {
           border-radius: 8px;
           cursor: pointer;
           font-weight: bold;
+          text-transform: uppercase;
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+          transition: all 0.3s ease;
+        }
+        .submit-button:hover {
+          background: linear-gradient(90deg, #ff77ff, #77ddff);
+          transform: scale(1.05);
         }
         .submit-button:disabled {
           background: #ccc;
+          cursor: not-allowed;
         }
         .message {
-          color: red;
+          color: #ff5555;
           font-weight: bold;
         }
         .response-frame {
@@ -143,11 +153,13 @@ export default function WorkflowForm() {
           padding: 10px;
           background: rgba(255, 255, 255, 0.2);
           border-radius: 5px;
+          box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
         }
         .workflow-text {
           white-space: pre-wrap;
           word-wrap: break-word;
           font-size: 1rem;
+          color: #ffffff;
         }
       `}</style>
     </div>
