@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { Rocket, Menu } from 'lucide-react';
 import { useState } from 'react';
@@ -48,7 +50,7 @@ export default function MainLayout({ children }: {
 
       <footer className="bg-gray-900/80 backdrop-blur border-t border-gray-800 mt-8">
         <div className="container mx-auto px-4 py-4 text-center text-gray-400">
-          © 2024 Agentic Studio. Empower your workflows.
+          © 2025 Superior Communications. Empower your workflows.
           <div className="mt-2">
             <Link href="https://twitter.com" className="mx-2 hover:text-indigo-400">Twitter</Link>
             <Link href="https://github.com" className="mx-2 hover:text-indigo-400">GitHub</Link>
