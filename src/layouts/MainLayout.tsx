@@ -23,17 +23,17 @@ export default function MainLayout({ children }: {
             <Menu className="w-8 h-8" />
           </button>
         </div>
-        {menuOpen && (
-          <div className="text-center py-3 space-y-2 bg-gray-900 border-t border-gray-800">
-            <Link href="/" className="block text-indigo-300 hover:text-indigo-500">Home</Link>
-            <Link href="/about" className="block text-indigo-300 hover:text-indigo-500">About</Link>
-            <Link href="/contact" className="block text-indigo-300 hover:text-indigo-500">Contact</Link>
-          </div>
-        )}
+        <div className={`${menuOpen ? 'block' : 'hidden'} text-center py-3 space-y-2 bg-gray-900 border-t border-gray-800 transition-all duration-300 ease-in-out`}>
+          <Link href="/" className="block text-indigo-300 hover:text-indigo-500">Home</Link>
+          <Link href="/about" className="block text-indigo-300 hover:text-indigo-500">About</Link>
+          <Link href="/contact" className="block text-indigo-300 hover:text-indigo-500">Contact</Link>
+        </div>
       </nav>
+
       <main className="container mx-auto px-4 py-8 flex-1">
         {children}
       </main>
+
       <footer className="bg-gray-900/80 backdrop-blur border-t border-gray-800 mt-8">
         <div className="container mx-auto px-4 py-4 text-center text-gray-400">
           © 2025 Superior Communications. Empower your workflows.
