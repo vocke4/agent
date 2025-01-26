@@ -1,14 +1,18 @@
-// src/app/layout.tsx
 import '../styles/global.css';
+import MainLayout from '@/components/layouts/MainLayout';
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <MainLayout>
+          {children}
+        </MainLayout>
+      </body>
     </html>
   );
 }
