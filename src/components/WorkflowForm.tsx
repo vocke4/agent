@@ -1,11 +1,17 @@
 'use client';
 import { useState } from 'react';
 
+// Define a type for messages
+interface Message {
+  question: string;
+  response: string;
+}
+
 export default function WorkflowForm() {
-  const [goal, setGoal] = useState('');
-  const [messages, setMessages] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [goal, setGoal] = useState<string>('');
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
 
   const handleSubmit = async () => {
     if (!goal.trim()) {
