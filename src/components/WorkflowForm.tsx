@@ -1,16 +1,17 @@
 'use client';
-
 import { useState } from 'react';
 
-export default function WorkflowForm() {
+interface WorkflowFormProps {
+  onWorkflowCreated: (workflow: any) => void;
+}
+
+export default function WorkflowForm({ onWorkflowCreated }: WorkflowFormProps) {
   const [goal, setGoal] = useState('');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const [workflowResponse, setWorkflowResponse] = useState<string | null>(null);
+  const [workflowResponse, setWorkflowResponse] = useState<string[]>([]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const handleSubmit = async () => {
     if (!goal.trim()) {
       setMessage('Please enter a valid goal.');
       return;
@@ -18,8 +19,7 @@ export default function WorkflowForm() {
 
     setLoading(true);
     setMessage('');
-    setWorkflowResponse(null);
-
+    
     try {
       const response = await fetch('/api/create-workflow', {
         method: 'POST',
@@ -31,7 +31,8 @@ export default function WorkflowForm() {
 
       if (response.ok && result.success) {
         setMessage('Workflow created successfully!');
-        setWorkflowResponse(result.generatedWorkflow);
+        onWorkflowCreated(result.workflow);
+        setWorkflowResponse((prev) => [...prev, result.generatedWorkflow]);
         setGoal(''); // Clear input after successful submission
       } else {
         setMessage(`Error: ${result.error || 'Something went wrong'}`);
@@ -46,19 +47,16 @@ export default function WorkflowForm() {
   return (
     <div className="workflow-form">
       <h2>Create a New Workflow</h2>
-      <form onSubmit={handleSubmit} className="workflow-form-container">
-        <input
-          type="text"
-          value={goal}
-          onChange={(e) => setGoal(e.target.value)}
-          placeholder="Enter your goal"
-          className="input-field"
-          disabled={loading}
-        />
-        <button type="submit" disabled={loading || !goal.trim()} className="submit-button">
-          {loading ? 'Processing...' : 'Submit'}
-        </button>
-      </form>
+      <input
+        type="text"
+        value={goal}
+        onChange={(e) => setGoal(e.target.value)}
+        placeholder="Enter your goal"
+        className="input-field"
+      />
+      <button onClick={handleSubmit} disabled={loading} className="submit-button">
+        {loading ? 'Processing...' : 'Submit'}
+      </button>
 
       {message && <p className="message">{message}</p>}
 
@@ -66,8 +64,12 @@ export default function WorkflowForm() {
         <h3>AI Response:</h3>
         {loading ? (
           <p>Generating workflow... Please wait.</p>
-        ) : workflowResponse ? (
-          <pre className="workflow-text">{workflowResponse}</pre>
+        ) : workflowResponse.length > 0 ? (
+          <div className="workflow-history">
+            {workflowResponse.map((response, index) => (
+              <pre key={index} className="workflow-text">{response}</pre>
+            ))}
+          </div>
         ) : (
           <p>No response yet. Submit a goal to generate workflow.</p>
         )}
@@ -79,50 +81,40 @@ export default function WorkflowForm() {
           flex-direction: column;
           align-items: center;
           justify-content: center;
+          gap: 1rem;
           max-width: 600px;
           margin: 0 auto;
           padding: 20px;
-          border: 1px solid #ddd;
+          border: 1px solid #ccc;
           border-radius: 8px;
-          background-color: #f9f9f9;
+          background: linear-gradient(to right, #ff00ff, #00ffff);
         }
-
-        .workflow-form-container {
-          display: flex;
-          width: 100%;
-          gap: 10px;
-        }
-
         .input-field {
-          flex-grow: 1;
+          width: 100%;
           padding: 12px;
           font-size: 1rem;
           border: 1px solid #ccc;
           border-radius: 5px;
-          outline: none;
+          background-color: #fff;
+          color: #333;
         }
-
         .submit-button {
-          padding: 12px 20px;
+          width: 100%;
+          padding: 12px;
           font-size: 1rem;
-          background-color: #0070f3;
+          background: linear-gradient(90deg, #ff00ff, #00ffff);
           color: white;
           border: none;
           border-radius: 5px;
           cursor: pointer;
-          transition: background-color 0.3s ease;
         }
-
         .submit-button:disabled {
           background-color: #ccc;
-          cursor: not-allowed;
         }
-
         .message {
-          color: ${message.includes('Error') ? 'red' : 'green'};
+          color: red;
           font-weight: bold;
         }
-
         .response-frame {
           width: 100%;
           padding: 15px;
@@ -132,8 +124,9 @@ export default function WorkflowForm() {
           border-radius: 5px;
           min-height: 150px;
           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          overflow-y: auto;
+          max-height: 300px;
         }
-
         .workflow-text {
           white-space: pre-wrap;
           word-wrap: break-word;
