@@ -25,7 +25,8 @@
       "react-markdown",
       "remark-gfm",
       "unist-util-position",
-      "mdast-util-from-markdown"
+      "mdast-util-from-markdown",
+      "./src/types/react-svg"
     ],
     "strictNullChecks": true,
     "allowSyntheticDefaultImports": true,
