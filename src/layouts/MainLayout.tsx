@@ -25,11 +25,13 @@ export default function MainLayout({ children }: {
           </button>
         </div>
         <div 
-          className={`transition-all duration-500 ease-in-out ${menuOpen ? 'max-h-60 opacity-100' : 'max-h-0 opacity-0'} overflow-hidden`}
+          className={`transition-all duration-500 ease-in-out ${menuOpen ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'} overflow-hidden`}
         >
-          <Link href="/" className="block py-2 text-indigo-300 hover:text-indigo-500">Home</Link>
-          <Link href="/about" className="block py-2 text-indigo-300 hover:text-indigo-500">About</Link>
-          <Link href="/contact" className="block py-2 text-indigo-300 hover:text-indigo-500">Contact</Link>
+          <ul className="flex flex-col text-center space-y-2">
+            <li><Link href="/" className="block text-indigo-300 hover:text-indigo-500 py-2">Home</Link></li>
+            <li><Link href="/about" className="block text-indigo-300 hover:text-indigo-500 py-2">About</Link></li>
+            <li><Link href="/contact" className="block text-indigo-300 hover:text-indigo-500 py-2">Contact</Link></li>
+          </ul>
         </div>
       </nav>
 
@@ -40,10 +42,6 @@ export default function MainLayout({ children }: {
       <footer className="bg-gray-900/80 backdrop-blur border-t border-gray-800 mt-8">
         <div className="container mx-auto px-4 py-4 text-center text-gray-400">
           © 2025 Superior Communications. Empower your workflows.
-          <div className="flex justify-center gap-4 mt-2">
-            <Link href="https://twitter.com" className="text-indigo-300 hover:text-indigo-500">Twitter</Link>
-            <Link href="https://github.com" className="text-indigo-300 hover:text-indigo-500">GitHub</Link>
-          </div>
         </div>
       </footer>
     </div>
