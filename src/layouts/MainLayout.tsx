@@ -1,3 +1,8 @@
+'use client';
+import { useState } from 'react'; // Add missing import
+import Link from 'next/link';
+import { Rocket, Menu } from 'lucide-react';
+
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -51,26 +56,4 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   );
 }
 
-// Reusable NavLink component
-function NavLink({ href, children }: { href: string; children: React.ReactNode }) {
-  return (
-    <Link
-      href={href}
-      className="text-indigo-300 hover:text-indigo-100 transition-colors font-medium"
-    >
-      {children}
-    </Link>
-  );
-}
-
-// Mobile-specific NavLink
-function MobileNavLink({ href, children }: { href: string; children: React.ReactNode }) {
-  return (
-    <Link
-      href={href}
-      className="block px-4 py-2 text-indigo-300 hover:bg-slate-800 rounded-lg transition-colors"
-    >
-      {children}
-    </Link>
-  );
-}
+// Rest of the component remains the same...
