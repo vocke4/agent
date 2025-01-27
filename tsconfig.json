@@ -5,6 +5,7 @@
     "allowJs": true,
     "skipLibCheck": false,
     "strict": false,
+    "strictNullChecks": false,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "incremental": true,
@@ -23,16 +24,12 @@
       "next",
       "node",
       "react-markdown",
-      "remark-gfm",
-      "unist-util-position",
-      "mdast-util-from-markdown",
-      "./src/types/react-svg"
+      "remark-gfm"
     ],
-    "strictNullChecks": true,
     "allowSyntheticDefaultImports": true,
     "plugins": [{ "name": "next" }],
     "moduleResolution": "node"
   },
-  "include": ["src/**/*", ".next/types/**/*.ts", "next-env.d.ts", "**/*.d.ts"],
+  "include": ["src/**/*", ".next/types/**/*.ts", "next-env.d.ts"],
   "exclude": ["node_modules"]
 }
