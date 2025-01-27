@@ -7,7 +7,7 @@
     "moduleResolution": "node",
     "jsx": "preserve",
     
-    // Let Next.js do the emitting
+    // Let Next.js handle all emitting
     "noEmit": true,
     
     // Adjust strictness as needed
@@ -25,7 +25,7 @@
     // Use Next + Node types
     "types": ["next", "node"],
 
-    // Example path alias
+    // Example path alias (assuming your source code is in `src/*`)
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
@@ -39,6 +39,12 @@
     ]
   },
   // Include your source files and Next.js types
-  "include": ["src", ".next/types/**/*.ts", "next-env.d.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+    "src", 
+    ".next/types/**/*.ts", 
+    "next-env.d.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }
