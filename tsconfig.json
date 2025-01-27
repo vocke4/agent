@@ -4,7 +4,7 @@
     "lib": ["dom", "dom.iterable", "esnext"],
     "noEmit": true,
 
-    // If you run into 3rd-party type conflicts, skip them
+    // If there's any 3rd-party conflict, skip it
     "skipLibCheck": true,
 
     // Next.js recommended
@@ -17,8 +17,8 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "isolatedModules": true,
-    
-    // Types
+
+    // Type definitions
     "types": ["next", "node"],
 
     // Example path aliases
