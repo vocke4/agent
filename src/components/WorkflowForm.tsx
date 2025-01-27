@@ -1,10 +1,8 @@
 "use client";
-import { useState } from 'react';
-import { Clipboard, AlertCircle, ChevronRight } from 'lucide-react'; 
-// ^ No Loader2 import here
-
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import { useState } from "react";
+// Removed imports from "lucide-react"
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface WorkflowStep {
   id: number;
@@ -13,9 +11,9 @@ interface WorkflowStep {
 }
 
 export default function WorkflowForm() {
-  const [goal, setGoal] = useState('');
+  const [goal, setGoal] = useState("");
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [workflowSteps, setWorkflowSteps] = useState<WorkflowStep[]>([]);
   const [expandedSteps, setExpandedSteps] = useState<number[]>([]);
 
@@ -29,25 +27,25 @@ export default function WorkflowForm() {
 
   const handleSubmit = async () => {
     if (!goal.trim()) {
-      setMessage('Please enter a valid goal.');
+      setMessage("Please enter a valid goal.");
       return;
     }
 
     setLoading(true);
-    setMessage('');
+    setMessage("");
 
     try {
-      const response = await fetch('/api/create-workflow', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/create-workflow", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ goal }),
       });
 
       const result = await response.json();
       setWorkflowSteps(result.steps);
-      setGoal('');
+      setGoal("");
     } catch (error) {
-      setMessage('An unexpected error occurred. Please try again.');
+      setMessage("An unexpected error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -74,24 +72,30 @@ export default function WorkflowForm() {
           disabled={loading}
         />
 
-        <button onClick={handleSubmit} disabled={loading} className="submit-button">
+        <button
+          onClick={handleSubmit}
+          disabled={loading}
+          className="submit-button"
+        >
           {loading ? (
             <div className="flex items-center gap-2">
-              {/* Inline CSS spinner */}
+              {/* Inline spinner (CSS-based) */}
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
               Generating Workflow...
             </div>
           ) : (
             <>
-              <Clipboard className="w-5 h-5" />
+              {/* Replaced <Clipboard /> icon with an emoji */}
+              <span className="w-5 h-5">📋</span>
               Generate Workflow
             </>
           )}
         </button>
 
         {message && (
-          <div className="error-message">
-            <AlertCircle className="w-5 h-5" />
+          <div className="error-message flex items-center gap-2">
+            {/* Replaced <AlertCircle /> icon with an emoji */}
+            <span className="w-5 h-5">⚠️</span>
             {message}
           </div>
         )}
@@ -117,11 +121,11 @@ export default function WorkflowForm() {
             {workflowSteps
               .map(
                 (step) => `
-              ## ${step.title}
-              ${step.content}
-            `
+## ${step.title}
+${step.content}
+`
               )
-              .join('\n')}
+              .join("\n")}
           </ReactMarkdown>
 
           {workflowSteps.map((step) => (
@@ -133,12 +137,17 @@ export default function WorkflowForm() {
               onClick={() => toggleStep(step.id)}
               aria-expanded={expandedSteps.includes(step.id)}
             >
-              <div className="step-header">
-                <ChevronRight
+              <div className="step-header flex items-center gap-2">
+                {/* Replaced <ChevronRight> icon with a simple arrow/chevron */}
+                <span
                   className={`transition-transform ${
-                    expandedSteps.includes(step.id) ? 'rotate-90' : ''
+                    expandedSteps.includes(step.id)
+                      ? "rotate-90 inline-block"
+                      : ""
                   }`}
-                />
+                >
+                  &gt;
+                </span>
                 {step.title}
               </div>
               {expandedSteps.includes(step.id) && (
