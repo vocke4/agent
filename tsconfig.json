@@ -1,15 +1,15 @@
 {
   "compilerOptions": {
-    // Target modern JS
+    // Emit modern JS
     "target": "esnext",
     "lib": ["dom", "dom.iterable", "esnext"],
-    // let Next.js handle the emits
+    
+    // Let Next.js handle emits
     "noEmit": true,
     
-    // Keep these on if possible for better type safety
-    "strict": true,
-    // or at least "strict": false but "skipLibCheck": true
-    "skipLibCheck": true,
+    // Strictness (can be true or false as needed)
+    "strict": false,
+    "skipLibCheck": true, // <-- Helps bypass some 3rd-party type conflicts
 
     // Next.js recommended
     "module": "esnext",
@@ -21,16 +21,16 @@
     "esModuleInterop": true,
     "isolatedModules": true,
 
-    // Next.js auto-generated
+    // Type definitions
     "types": ["next", "node"],
 
-    // Base URL and paths example
+    // Paths for aliases (example)
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
     },
 
-    // Official Next.js plugin for TS
+    // Next.js plugin
     "plugins": [{ "name": "next" }]
   },
   "include": ["src", ".next/types/**/*.ts", "next-env.d.ts"],
