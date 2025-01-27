@@ -1,11 +1,29 @@
 'use client';
 import { useState } from 'react';
-import { Clipboard, AlertCircle } from 'lucide-react';
+import { Clipboard, AlertCircle, ChevronRight } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+
+interface WorkflowStep {
+  id: number;
+  title: string;
+  content: string;
+}
 
 export default function WorkflowForm() {
-  const [goal, setGoal] = useState(''); // Add state declaration
+  const [goal, setGoal] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [workflowSteps, setWorkflowSteps] = useState<WorkflowStep[]>([]);
+  const [expandedSteps, setExpandedSteps] = useState<number[]>([]);
+
+  const toggleStep = (stepId: number) => {
+    setExpandedSteps(prev => 
+      prev.includes(stepId) 
+        ? prev.filter(id => id !== stepId)
+        : [...prev, stepId]
+    );
+  };
 
   const handleSubmit = async () => {
     if (!goal.trim()) {
@@ -24,6 +42,7 @@ export default function WorkflowForm() {
       });
 
       const result = await response.json();
+      setWorkflowSteps(result.steps);
       setGoal('');
     } catch (error) {
       setMessage('An unexpected error occurred. Please try again.');
@@ -33,7 +52,7 @@ export default function WorkflowForm() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="container">
       <div className="text-center mb-10">
         <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent mb-4">
           AI Workflow Architect
@@ -44,16 +63,14 @@ export default function WorkflowForm() {
       </div>
 
       <div className="space-y-6">
-        <div className="input-group">
-          <input
-            type="text"
-            value={goal}
-            onChange={(e) => setGoal(e.target.value)}
-            placeholder="Enter your objective..."
-            className="input-field"
-            disabled={loading}
-          />
-        </div>
+        <input
+          type="text"
+          value={goal}
+          onChange={(e) => setGoal(e.target.value)}
+          placeholder="Enter your objective..."
+          className="input-field"
+          disabled={loading}
+        />
 
         <button 
           onClick={handleSubmit} 
@@ -79,6 +96,68 @@ export default function WorkflowForm() {
             {message}
           </div>
         )}
+
+        <div className="workflow-container">
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            components={{
+              h1: ({node, ...props}) => (
+                <h1 className="workflow-header" {...props} />
+              ),
+              h2: ({node, ...props}) => (
+                <h2 className="workflow-header text-2xl" {...props} />
+              ),
+              ul: ({node, ...props}) => (
+                <ul className="substep-list" {...props} />
+              ),
+              li: ({node, ...props}) => (
+                <li className="substep-item" {...props} />
+              )
+            }}
+          >
+            {workflowSteps.map(step => `
+              ## ${step.title}
+              ${step.content}
+            `).join('\n')}
+          </ReactMarkdown>
+
+          {workflowSteps.map(step => (
+            <div 
+              key={step.id}
+              className="step-card"
+              role="button"
+              tabIndex={0}
+              onClick={() => toggleStep(step.id)}
+              aria-expanded={expandedSteps.includes(step.id)}
+            >
+              <div className="step-header">
+                <ChevronRight 
+                  className={`transition-transform ${
+                    expandedSteps.includes(step.id) ? 'rotate-90' : ''
+                  }`}
+                />
+                {step.title}
+              </div>
+              {expandedSteps.includes(step.id) && (
+                <div className="step-content">
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                      ul: ({node, ...props}) => (
+                        <ul className="substep-list" {...props} />
+                      ),
+                      li: ({node, ...props}) => (
+                        <li className="substep-item" {...props} />
+                      )
+                    }}
+                  >
+                    {step.content}
+                  </ReactMarkdown>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
