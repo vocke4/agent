@@ -1,148 +1,78 @@
-/* Reset and global styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
-}
-
 :root {
-    --text-color: #FFFFFF;
-    --icon-color: #ACACBE;
-    --icon-hover-bg: #5B5E71;
-    --placeholder-color: #DCDCDC;
-    --outgoing-chat-bg: #343541;
-    --incoming-chat-bg: #444654;
-    --outgoing-chat-border: #343541;
-    --incoming-chat-border: #444654;
+  --primary-color: #6366f1;
+  --secondary-color: #8b5cf6;
+  --background-color: #1e1e2e;
+  --text-color: #e0e0e0;
+  --border-color: #33354d;
+  --button-hover: #4f46e5;
 }
 
-.light-mode {
-    --text-color: #343641;
-    --icon-color: #A9A9BC;
-    --icon-hover-bg: #FAFAF3;
-    --placeholder-color: #6C6C6C;
-    --outgoing-chat-bg: #FFFFFF;
-    --incoming-chat-bg: #F7F7F8;
-    --outgoing-chat-border: #FFFFFF;
-    --incoming-chat-border: #D9D9E3;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
 }
 
 body {
-    background-color: var(--outgoing-chat-bg);
-    color: var(--text-color);
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
 }
 
-/* Container */
 .container {
-    background: var(--incoming-chat-bg);
-    border: 1px solid var(--incoming-chat-border);
-    border-radius: 12px;
-    max-width: 800px;
-    width: 100%;
-    padding: 2rem;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  max-width: 900px;
+  width: 100%;
+  padding: 2rem;
+  background: var(--background-color);
+  border-radius: 12px;
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border-color);
 }
 
-/* Form Elements */
 .input-field {
-    width: 100%;
-    padding: 14px;
-    font-size: 1rem;
-    border: 2px solid var(--incoming-chat-border);
-    background: var(--outgoing-chat-bg);
-    color: var(--text-color);
-    border-radius: 8px;
-    transition: all 0.3s ease-in-out;
-}
-
-.input-field::placeholder {
-    color: var(--placeholder-color);
+  width: 100%;
+  padding: 14px;
+  font-size: 1rem;
+  border: 2px solid var(--border-color);
+  background: var(--background-color);
+  color: var(--text-color);
+  border-radius: 8px;
+  outline: none;
+  transition: all 0.3s ease;
 }
 
 .input-field:focus {
-    border-color: var(--icon-color);
-    box-shadow: 0 0 10px rgba(99, 102, 241, 0.8);
-    outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 10px var(--primary-color);
 }
 
-/* Button */
 .submit-button {
-    width: 100%;
-    padding: 14px;
-    font-size: 1rem;
-    font-weight: bold;
-    color: var(--text-color);
-    background: linear-gradient(90deg, var(--icon-hover-bg), var(--icon-color));
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: transform 0.2s ease-in-out, background 0.3s ease-in-out;
+  padding: 14px;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #fff;
+  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
 }
 
 .submit-button:hover {
-    transform: translateY(-3px);
-    background: linear-gradient(90deg, var(--icon-color), var(--icon-hover-bg));
+  transform: translateY(-3px);
+  background: var(--button-hover);
 }
 
-button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-/* Response Frame */
 .response-frame {
-    max-height: 400px;
-    overflow-y: auto;
-    background: rgba(255, 255, 255, 0.05);
-    padding: 1rem;
-    border-radius: 8px;
-    border: 1px solid var(--incoming-chat-border);
-    margin-top: 1rem;
-}
-
-/* Workflow Response Styling */
-.response-item {
-    padding: 12px;
-    background: rgba(255, 255, 255, 0.08);
-    border-left: 4px solid var(--icon-hover-bg);
-    border-radius: 6px;
-    margin-bottom: 1rem;
-}
-
-/* Typography */
-h2, h3 {
-    font-weight: bold;
-    text-align: center;
-}
-
-h2 {
-    font-size: 2rem;
-    margin-bottom: 10px;
-    color: var(--text-color);
-}
-
-h3 {
-    font-size: 1.5rem;
-    color: var(--icon-color);
-}
-
-/* Responsive Design */
-@media (max-width: 600px) {
-    .container {
-        padding: 1rem;
-    }
-
-    h2 {
-        font-size: 1.8rem;
-    }
-
-    h3 {
-        font-size: 1.3rem;
-    }
+  max-height: 400px;
+  overflow-y: auto;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-top: 1rem;
 }
