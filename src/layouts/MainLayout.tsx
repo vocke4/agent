@@ -1,7 +1,9 @@
-'use client';
-import { useState } from 'react';
-import Link from 'next/link';
-import { Rocket, Menu } from 'lucide-react';
+"use client";
+import { useState } from "react";
+import Link from "next/link";
+
+// We removed:
+// import { Rocket, Menu } from 'lucide-react';
 
 // Define NavLink component before MainLayout
 const NavLink = ({ href, children }: { href: string; children: React.ReactNode }) => (
@@ -30,11 +32,15 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     <div className="min-h-screen flex flex-col">
       <nav className="bg-slate-900 border-b border-slate-800">
         <div className="container px-4 py-3 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-            <Rocket className="w-6 h-6 text-indigo-400" />
+          <Link
+            href="/"
+            className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+          >
+            {/* Replaced <Rocket ... /> with an emoji so we don't rely on lucide-react */}
+            <span className="w-6 h-6 text-indigo-400">🚀</span>
             <span className="text-xl font-semibold text-indigo-100">Agentic Studio</span>
           </Link>
-          
+
           {/* Desktop Navigation */}
           <div className="hidden md:flex gap-6">
             <NavLink href="/">Home</NavLink>
@@ -47,12 +53,13 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
             className="md:hidden p-2 rounded-lg hover:bg-slate-800 transition-colors"
             onClick={() => setMenuOpen(!menuOpen)}
           >
-            <Menu className="w-6 h-6 text-indigo-400" />
+            {/* Replaced <Menu ... /> with a burger-menu emoji/text */}
+            <span className="w-6 h-6 text-indigo-400">☰</span>
           </button>
         </div>
 
         {/* Mobile Menu */}
-        <div className={`md:hidden ${menuOpen ? 'block' : 'hidden'}`}>
+        <div className={`md:hidden ${menuOpen ? "block" : "hidden"}`}>
           <div className="px-4 pb-4 space-y-3">
             <MobileNavLink href="/">Home</MobileNavLink>
             <MobileNavLink href="/about">About</MobileNavLink>
@@ -62,9 +69,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
       </nav>
 
       <main className="flex-1 py-12">
-        <div className="container">
-          {children}
-        </div>
+        <div className="container">{children}</div>
       </main>
 
       <footer className="bg-slate-900 border-t border-slate-800">
