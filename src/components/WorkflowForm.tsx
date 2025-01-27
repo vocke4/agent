@@ -1,6 +1,8 @@
-'use client';
+"use client";
 import { useState } from 'react';
-import { Clipboard, AlertCircle, ChevronRight } from 'lucide-react';
+import { Clipboard, AlertCircle, ChevronRight } from 'lucide-react'; 
+// ^ No Loader2 import here
+
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -18,9 +20,9 @@ export default function WorkflowForm() {
   const [expandedSteps, setExpandedSteps] = useState<number[]>([]);
 
   const toggleStep = (stepId: number) => {
-    setExpandedSteps(prev => 
-      prev.includes(stepId) 
-        ? prev.filter(id => id !== stepId)
+    setExpandedSteps((prev) =>
+      prev.includes(stepId)
+        ? prev.filter((id) => id !== stepId)
         : [...prev, stepId]
     );
   };
@@ -72,13 +74,10 @@ export default function WorkflowForm() {
           disabled={loading}
         />
 
-        <button 
-          onClick={handleSubmit} 
-          disabled={loading}
-          className="submit-button"
-        >
+        <button onClick={handleSubmit} disabled={loading} className="submit-button">
           {loading ? (
             <div className="flex items-center gap-2">
+              {/* Inline CSS spinner */}
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
               Generating Workflow...
             </div>
@@ -101,28 +100,32 @@ export default function WorkflowForm() {
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             components={{
-              h1: ({node, ...props}) => (
+              h1: ({ node, ...props }) => (
                 <h1 className="workflow-header" {...props} />
               ),
-              h2: ({node, ...props}) => (
+              h2: ({ node, ...props }) => (
                 <h2 className="workflow-header text-2xl" {...props} />
               ),
-              ul: ({node, ...props}) => (
+              ul: ({ node, ...props }) => (
                 <ul className="substep-list" {...props} />
               ),
-              li: ({node, ...props}) => (
+              li: ({ node, ...props }) => (
                 <li className="substep-item" {...props} />
-              )
+              ),
             }}
           >
-            {workflowSteps.map(step => `
+            {workflowSteps
+              .map(
+                (step) => `
               ## ${step.title}
               ${step.content}
-            `).join('\n')}
+            `
+              )
+              .join('\n')}
           </ReactMarkdown>
 
-          {workflowSteps.map(step => (
-            <div 
+          {workflowSteps.map((step) => (
+            <div
               key={step.id}
               className="step-card"
               role="button"
@@ -131,7 +134,7 @@ export default function WorkflowForm() {
               aria-expanded={expandedSteps.includes(step.id)}
             >
               <div className="step-header">
-                <ChevronRight 
+                <ChevronRight
                   className={`transition-transform ${
                     expandedSteps.includes(step.id) ? 'rotate-90' : ''
                   }`}
@@ -143,12 +146,12 @@ export default function WorkflowForm() {
                   <ReactMarkdown
                     remarkPlugins={[remarkGfm]}
                     components={{
-                      ul: ({node, ...props}) => (
+                      ul: ({ node, ...props }) => (
                         <ul className="substep-list" {...props} />
                       ),
-                      li: ({node, ...props}) => (
+                      li: ({ node, ...props }) => (
                         <li className="substep-item" {...props} />
-                      )
+                      ),
                     }}
                   >
                     {step.content}
