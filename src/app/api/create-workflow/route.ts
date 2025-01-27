@@ -2,102 +2,130 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { openai } from '@/app/utils/openai';
 
-// Ensure environment variables are available
+// Validate environment variables
 const requiredEnvVars = [
-  'NEXT_PUBLIC_SUPABASE_SUPABASE_URL',
-  'NEXT_PUBLIC_SUPABASE_SUPABASE_SERVICE_ROLE_KEY',
+  'NEXT_PUBLIC_SUPABASE_URL',
+  'NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY',
   'OPENAI_API_KEY'
 ];
 
-for (const envVar of requiredEnvVars) {
+requiredEnvVars.forEach((envVar) => {
   if (!process.env[envVar]) {
-    console.error(`Missing required environment variable: ${envVar}`);
     throw new Error(`Missing required environment variable: ${envVar}`);
   }
-}
+});
 
-// Initialize Supabase client
+// Initialize Supabase client with corrected env vars
 const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_SUPABASE_SERVICE_ROLE_KEY!
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY!
 );
 
-// Ensure optimal Next.js runtime
 export const runtime = 'edge';
+const OPENAI_TIMEOUT = 15000; // 15 seconds
 
 export async function POST(request: NextRequest) {
   try {
-    // Validate request body
+    // Validate request
     const contentType = request.headers.get('content-type');
     if (!contentType?.includes('application/json')) {
       return NextResponse.json(
-        { error: 'Invalid content type. Expecting JSON' },
+        { error: 'Invalid content type. Please use JSON' },
         { status: 415 }
       );
     }
 
+    // Validate request body
     const { goal } = await request.json();
-    if (!goal || typeof goal !== 'string') {
+    if (!goal || typeof goal !== 'string' || goal.trim().length < 10) {
       return NextResponse.json(
-        { error: 'Valid goal string is required' },
+        { error: 'Valid goal string of at least 10 characters is required' },
         { status: 400 }
       );
     }
 
-    console.log('Received goal:', goal);
+    // Database insert with timeout protection
+    const insertPromise = supabase
+      .from('workflows')
+      .insert([{ goal }])
+      .select('*');
 
-    // Insert goal into Supabase with timeout protection
-    const dbPromise = supabase.from('workflows').insert([{ goal }]).select('*');
-
-    const dbResponse = await Promise.race([
-      dbPromise,
+    const insertResponse = await Promise.race([
+      insertPromise,
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Database timeout')), 10000)
+        setTimeout(() => reject(new Error('Database operation timed out')), 10000)
       )
     ]) as any;
 
-    if (dbResponse.error) {
-      console.error('Supabase Insert Error:', dbResponse.error);
+    if (insertResponse.error) {
+      console.error('Supabase Error:', insertResponse.error);
       return NextResponse.json(
-        { error: `Database error: ${dbResponse.error.message}` },
+        { error: 'Failed to save workflow' },
         { status: 500 }
       );
     }
 
-    console.log('Saved to database:', dbResponse.data);
+    const workflowId = insertResponse.data[0]?.id;
+    if (!workflowId) {
+      throw new Error('Failed to retrieve created workflow ID');
+    }
 
-    // Call OpenAI API to generate workflow
-    const aiResponse = await openai.chat.completions.create({
+    // Generate AI workflow with timeout protection
+    const openaiPromise = openai.chat.completions.create({
       model: 'gpt-4o',
       messages: [
         {
           role: 'system',
-          content: 'Generate a detailed workflow for the user goal with clear steps.',
+          content: 'Generate a detailed, step-by-step workflow for the following goal. Include clear actions and milestones.',
         },
         { role: 'user', content: goal },
       ],
       temperature: 0.7,
-      max_tokens: 800,
+      max_tokens: 1000,
     });
 
-    if (!aiResponse.choices || !aiResponse.choices[0]?.message?.content) {
-      throw new Error('Invalid response from OpenAI API');
-    }
+    const aiResponse = await Promise.race([
+      openaiPromise,
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('AI processing timed out')), OPENAI_TIMEOUT)
+      )
+    ]) as any;
 
+    if (!aiResponse.choices?.[0]?.message?.content) {
+      throw new Error('Failed to generate workflow');
+    }
     const generatedWorkflow = aiResponse.choices[0].message.content;
 
-    console.log('Generated AI workflow:', generatedWorkflow);
+    // Update workflow with AI response
+    const updateResponse = await supabase
+      .from('workflows')
+      .update({ generated_workflow: generatedWorkflow })
+      .eq('id', workflowId)
+      .select();
+
+    if (updateResponse.error) {
+      console.error('Update Error:', updateResponse.error);
+      return NextResponse.json(
+        { 
+          success: true,
+          warning: 'Workflow generated but failed to save',
+          generatedWorkflow,
+          databaseRecord: insertResponse.data[0]
+        },
+        { status: 200 }
+      );
+    }
 
     return NextResponse.json({
       success: true,
-      databaseRecord: dbResponse.data[0],
       generatedWorkflow,
+      databaseRecord: updateResponse.data[0]
     });
 
   } catch (error: any) {
-    console.error('Internal server error:', error);
+    console.error('Server Error:', error);
     return NextResponse.json(
-      { error: error.message || 'Internal Server Error' },
+      { error: error.message || 'Internal server error' },
       { status: 500 }
     );
   }
