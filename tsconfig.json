@@ -2,38 +2,21 @@
   "compilerOptions": {
     "target": "esnext",
     "lib": ["dom", "dom.iterable", "esnext"],
-    "noEmit": true,
-
-    // If there's any 3rd-party conflict, skip it
-    "skipLibCheck": true,
-
-    // Next.js recommended
-    "strict": false,
     "module": "esnext",
     "moduleResolution": "node",
+    "strict": false,
+    "skipLibCheck": true,
     "jsx": "preserve",
-    "resolveJsonModule": true,
+    "noEmit": true,
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "isolatedModules": true,
-
-    // Type definitions
-    "types": ["next", "node"],
-
-    // Example path aliases
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"]
-    },
-
-    // Next.js plugin
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ]
+    "isolatedModules": true
   },
-  "include": ["src", ".next/types/**/*.ts", "next-env.d.ts"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx"
+  ],
   "exclude": ["node_modules"]
 }
