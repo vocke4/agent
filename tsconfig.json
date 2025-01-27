@@ -3,15 +3,15 @@
     // Emit modern JS
     "target": "esnext",
     "lib": ["dom", "dom.iterable", "esnext"],
-    
+
     // Let Next.js handle emits
     "noEmit": true,
-    
-    // Strictness (can be true or false as needed)
-    "strict": false,
-    "skipLibCheck": true, // <-- Helps bypass some 3rd-party type conflicts
 
-    // Next.js recommended
+    // Adjust strictness settings as needed
+    "strict": false,
+    "skipLibCheck": true, // <-- Important to bypass 3rd-party type conflicts
+
+    // Next.js recommended settings
     "module": "esnext",
     "moduleResolution": "node",
     "jsx": "preserve",
@@ -24,14 +24,18 @@
     // Type definitions
     "types": ["next", "node"],
 
-    // Paths for aliases (example)
+    // Example path aliases
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
     },
 
     // Next.js plugin
-    "plugins": [{ "name": "next" }]
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
   "include": ["src", ".next/types/**/*.ts", "next-env.d.ts"],
   "exclude": ["node_modules"]
