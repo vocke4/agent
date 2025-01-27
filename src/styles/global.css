@@ -91,3 +91,14 @@ body {
   align-items: center;
   gap: 0.5rem;
 }
+
+/* Spinner Animations */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
