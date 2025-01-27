@@ -1,5 +1,36 @@
+'use client';
+import { useState } from 'react';
+import { Clipboard, AlertCircle } from 'lucide-react';
+
 export default function WorkflowForm() {
-  // ... existing state ...
+  const [goal, setGoal] = useState(''); // Add state declaration
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+
+  const handleSubmit = async () => {
+    if (!goal.trim()) {
+      setMessage('Please enter a valid goal.');
+      return;
+    }
+
+    setLoading(true);
+    setMessage('');
+
+    try {
+      const response = await fetch('/api/create-workflow', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ goal }),
+      });
+
+      const result = await response.json();
+      setGoal('');
+    } catch (error) {
+      setMessage('An unexpected error occurred. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="max-w-2xl mx-auto">
