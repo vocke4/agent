@@ -1,35 +1,38 @@
 {
   "compilerOptions": {
+    // Target modern JS
     "target": "esnext",
     "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
-    "skipLibCheck": false,
-    "strict": false,
-    "strictNullChecks": false,
-    "forceConsistentCasingInFileNames": true,
+    // let Next.js handle the emits
     "noEmit": true,
-    "incremental": true,
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "jsx": "preserve",
+    
+    // Keep these on if possible for better type safety
+    "strict": true,
+    // or at least "strict": false but "skipLibCheck": true
+    "skipLibCheck": true,
+
+    // Next.js recommended
     "module": "esnext",
+    "moduleResolution": "node",
+    "jsx": "preserve",
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+
+    // Next.js auto-generated
+    "types": ["next", "node"],
+
+    // Base URL and paths example
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@/utils/*": ["src/utils/*"],
-      "@/layouts/*": ["src/layouts/*"]
+      "@/*": ["src/*"]
     },
-    "types": [
-      "next",
-      "node",
-      "react-markdown",
-      "remark-gfm"
-    ],
-    "allowSyntheticDefaultImports": true,
-    "plugins": [{ "name": "next" }],
-    "moduleResolution": "node"
+
+    // Official Next.js plugin for TS
+    "plugins": [{ "name": "next" }]
   },
-  "include": ["src/**/*", ".next/types/**/*.ts", "next-env.d.ts"],
+  "include": ["src", ".next/types/**/*.ts", "next-env.d.ts"],
   "exclude": ["node_modules"]
 }
