@@ -1,22 +1,44 @@
 {
   "compilerOptions": {
+    // Compile to modern JavaScript
     "target": "esnext",
     "lib": ["dom", "dom.iterable", "esnext"],
     "module": "esnext",
     "moduleResolution": "node",
-    "strict": false,
-    "skipLibCheck": true,
     "jsx": "preserve",
+    
+    // Let Next.js do the emitting
     "noEmit": true,
+    
+    // Adjust strictness as needed
+    "strict": false,
+    
+    // Important to bypass type conflicts in node_modules
+    "skipLibCheck": true,
+    
+    // Common React/TypeScript settings
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+
+    // Use Next + Node types
+    "types": ["next", "node"],
+
+    // Example path alias
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+
+    // Next.js plugin for better TS integration
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx"
-  ],
+  // Include your source files and Next.js types
+  "include": ["src", ".next/types/**/*.ts", "next-env.d.ts"],
   "exclude": ["node_modules"]
 }
